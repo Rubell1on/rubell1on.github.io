@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= groupName%> - расписание</title>
+    <link rel="stylesheet" href="./public/CSS/style.css">
+</head>
+<body>
+    <ul class="top-toolbar">
+        <li class="group-name"><%= groupName%></li>
+        <li class="quit-button">Выход</li>
+    </ul>
+    <div class="wrapper">
+        <div class="controls">
+            <div class="first-week">Первая неделя</div>
+            <div class="second-week">Вторая неделя</div>
+        </div>
+        <% for (week in schedule) {%>
+            <table class="tbl" id="week-<%= week%>">
+                <tr>
+                    <td class="week-str"colspan="2">Неделя <%=week%></td>
+                </tr>
+                <% for (day in schedule[week]) {%>
+                    <% if (Object.keys(schedule[week][day]).length > 0) {%>
+                        <tr>
+                            <td colspan="6" class="day-name"><%= day%></td>
+                        </tr>
+                        <tbody class="block-body">
+                        <% for (pair in schedule[week][day]) {%>
+                            <%const short = schedule[week][day][pair];%>
+                                <tr class="row">
+                                    <td class="pair"><%= pair%></td>
+                                    <td><%= [short.begin, short.end].join('-')%></td>
+                                    <td><%= short.name%></td>
+                                    <td class="pair-type"><%= short.type%></td>
+                                    <td class="teacher-name"><%= short.teacher%></td>
+                                    <td class="class-room"><%= short.room%></td>
+                                </tr>
+                        <%}%>
+                        </tbody>
+                    <%}%>
+                <%}%>
+            </table>
+        <%}%>
+    </div>
+    <script src="JS/jquery.js"></script>
+    <script src="JS/tables.js"></script>
+</body>
+</html>
