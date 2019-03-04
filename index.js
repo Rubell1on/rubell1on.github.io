@@ -2,7 +2,7 @@ const xlsx = require('node-xlsx');
 const express = require('express');
 const utils = require('./JS/utils');
 
-const IP = "192.168.0.105";
+// const IP = "192.168.0.105";
 const PORT = 3000;
 
 const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
@@ -15,8 +15,8 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
-app.listen(PORT, IP);
-console.log(`Сервер запущен и ожидает запросы по ${IP}:${PORT}`);
+app.listen(PORT);
+// console.log(`Сервер запущен и ожидает запросы по ${IP}:${PORT}`);
 
 const groupNames = utils.getGroupNames(obj);
 const schedules = utils.getSchedules(groupNames, obj);
