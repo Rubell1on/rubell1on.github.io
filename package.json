@@ -1,4 +1,8 @@
+
 {
+  "scripts": {
+    "start": "node server.js"
+  },
   "requires": true,
   "lockfileVersion": 1,
   "dependencies": {
