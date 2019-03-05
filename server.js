@@ -3,7 +3,7 @@ const express = require('express');
 const utils = require('./JS/utils');
 
 // const IP = "192.168.0.105";
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
 // const obj = xlsx.parse(__dirname + '/xls/IEP-1-kurs-2-sem.xlsx'); 
