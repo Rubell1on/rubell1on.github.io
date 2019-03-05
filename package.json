@@ -7,8 +7,6 @@
         "node-xlsx": "^0.14.1"
     },
     "engines": {
-        "node": "11.6.0",
-        "npm": "6.5.0"
     },
     "scripts": {
         "start": "node server.js"
