@@ -15,8 +15,9 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
-app.listen(PORT);
-// console.log(`Сервер запущен и ожидает запросы по ${IP}:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+});
 
 const groupNames = utils.getGroupNames(obj);
 const schedules = utils.getSchedules(groupNames, obj);
