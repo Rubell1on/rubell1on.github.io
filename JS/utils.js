@@ -27,24 +27,25 @@ module.exports = {
         return groupNames.reduce((acc, group) => {
             const index = group.ind;
             acc[group.name] = obj[0].data.reduce((acc, curr, ind) => {
-                if(dOTW.includes(curr[0]))
+                if (dOTW.includes(curr[0]))
                     acc.day = curr[0];
             
-                if(Object.keys(enumer).includes(curr[4])) {
+                if (Object.keys(enumer).includes(curr[4])) {
                     acc.week = curr[4];
                     if(!acc[enumer[acc.week]])
                         acc[enumer[acc.week]] = {};
-                if(!acc[enumer[acc.week]][acc.day])   
+                if (!acc[enumer[acc.week]][acc.day])   
                     acc[enumer[acc.week]][acc.day] = {}
                 }
-                if(curr[index] && ind > 2) {
-                    if(curr[2]) {
-                        acc.begin = curr[2];
-                        acc.end = curr[3];
-                    }
-                    if(curr[1]) {
-                        acc.num = curr[1];
-                    }
+                if (typeof curr[1] === 'number') {
+                    acc.num = curr[1];
+                }
+                if (/\d?\d-\d\d/.test(curr[2])) {
+                    acc.begin = curr[2];
+                    acc.end = curr[3];
+                }
+
+                if (curr[index] && ind > 2) {
                     acc[enumer[acc.week]][acc.day][acc.num] = {
                         begin: acc.begin,
                         end: acc.end,
