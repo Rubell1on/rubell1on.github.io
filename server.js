@@ -55,11 +55,17 @@ app.get('/update', (req, res) => {
 });
 
 async function postFeedback(req, res) {
+    console.log(1);
     if (req.body.text) {
+        console.log(2);
         if (utils.isFileExists(feedback)) {
+            console.log(3);
             const file = await utils.readFile(feedback);
+            console.log(4);
             const extendedFile = file.concat(req.body);
+            console.log(5);
             await utils.writeFile(feedback, extendedFile);
+            console.log(6);
         } else {
             await utils.writeFile(feedback, [req.body]);
         }
