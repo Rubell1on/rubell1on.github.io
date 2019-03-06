@@ -63,6 +63,9 @@ async function postFeedback(req, res) {
         } else {
             await utils.writeFile(feedback, [req.body]);
         }
+        res.end(201);
+    } else {
+        res.end(400);
     }
 }
 

@@ -82,6 +82,6 @@ module.exports = {
         });
     },
     isFileExists: function(path) {
-        fs.existsSync(path);
+        return fs.existsSync(path);
     } 
 };
