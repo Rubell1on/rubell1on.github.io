@@ -3,7 +3,7 @@ const express = require('express');
 const utils = require('./JS/utils');
 const bodyParser = require('body-parser');
 
-const feedback = __dirname + '/feedback/feedback.json';
+const feedback = __dirname + '/feedback.json';
 const PORT = process.env.PORT || 3000;
 
 const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
