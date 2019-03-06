@@ -3,7 +3,7 @@ const express = require('express');
 const utils = require('./JS/utils');
 const bodyParser = require('body-parser');
 
-const feedback = './feedback/feedback.json';
+const feedback = __dirname + '/feedback/feedback.json';
 const PORT = process.env.PORT || 3000;
 
 const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
@@ -16,6 +16,7 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
+app.use('/feedback', express.static('feedback'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.listen(PORT, () => {
     console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
