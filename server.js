@@ -67,6 +67,7 @@ async function postFeedback(req, res) {
             await utils.writeFile(feedback, extendedFile);
             console.log(6);
         } else {
+            console.log(7);
             await utils.writeFile(feedback, [req.body]);
         }
         res.end(201);
