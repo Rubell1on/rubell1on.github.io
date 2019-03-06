@@ -1,7 +1,9 @@
 const xlsx = require('node-xlsx');
 const express = require('express');
 const utils = require('./JS/utils');
+const bodyParser = require('body-parser');
 
+const feedback = './feedback/feedback.json';
 const PORT = process.env.PORT || 3000;
 
 const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
@@ -14,6 +16,7 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
+app.use(bodyParser.urlencoded({extended: false}));
 app.listen(PORT, () => {
     console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
 });
@@ -43,8 +46,22 @@ app.get('/schedule', (req, res) => {
         res.send(`Расписание по группе ${groupName} не найдено!`);
 });
 
+app.post('/feedback', (req, res) => postFeedback(req, res).catch(err => console.log(err)));
+
 app.get('/update', (req, res) => {
     res.write('Обновление расписаний началось');
     res.end(200);
 });
+
+async function postFeedback(req, res) {
+    if (req.body.text) {
+        if (utils.isFileExists(feedback)) {
+            const file = await utils.readFile(feedback);
+            const extendedFile = file.concat(req.body);
+            await utils.writeFile(feedback, extendedFile);
+        } else {
+            await utils.writeFile(feedback, [req.body]);
+        }
+    }
+}
 

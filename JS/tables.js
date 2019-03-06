@@ -40,6 +40,8 @@ $('.quit-button').click(() => {
     location.href = location.origin;
 });
 
+$('.feedback-button').click(() => createFeedbackOverlay());
+
 function createOverlay(handler) {
     const children = $(handler.delegateTarget).children();  
     const pairType = children[3].innerText;
@@ -61,6 +63,29 @@ function createOverlay(handler) {
         TIMER, 
         () => $('.overlay').remove())
     );
+}
+
+function createFeedbackOverlay() {
+    const overlay = '<div class="feedback overlay">' +
+                        '<div class="feedback-overlay-window">' +
+                            '<form class="feedback-overlay" action="/feedback" method="POST">' +
+                                '<label for="feedback-message">Опишите проблему или пожелание</label>' +
+                                '<div class="feedback-text-wrapper">' +
+                                    '<textarea id="feedback-message" name="text"></textarea>' +
+                                '</div>' +
+                                '<input type="submit" value="Оставить отзыв">' +
+                            '</form>' +
+                        '</div>' +
+                    '</div>';
+
+    $('body').prepend(overlay);
+    $('.overlay').css('opacity', '0').animate({'opacity': '1'}, TIMER);
+    // $('.overlay').bind('click', 
+    //     () => $('.overlay').animate({'opacity': '0'}, 
+    //     TIMER, 
+    //     () => $('div[class=overlay]').remove())
+    // );
+    $(this).click(handler => console.log(handler));
 }
 
 function getCurrWeek() {

@@ -2,6 +2,7 @@
     "name": "node-example",
     "version": "0.0.1",
     "dependencies": {
+        "body-parser": "^1.18.3",
         "ejs": "^2.6.1",
         "express": "^3.21.2",
         "node-xlsx": "^0.14.1"
