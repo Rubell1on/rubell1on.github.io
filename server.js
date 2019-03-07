@@ -50,8 +50,10 @@ app.get('/schedule', (req, res) => {
 app.post('/feedback', (req, res) => postFeedback(req, res).catch(err => console.log(err)));
 
 app.get('/update', (req, res) => {
-    res.write('Обновление расписаний началось');
-    res.end(200);
+    // res.write('Обновление расписаний началось');
+    // res.end(200);
+    const fs = require('fs');
+    fs.writeFileSync(__dirname + '/file.txt', 'Helo');
 });
 
 async function postFeedback(req, res) {
