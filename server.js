@@ -50,10 +50,15 @@ app.get('/schedule', (req, res) => {
 app.post('/feedback', (req, res) => postFeedback(req, res).catch(err => console.log(err)));
 
 app.get('/update', (req, res) => {
-    // res.write('Обновление расписаний началось');
-    // res.end(200);
-    const fs = require('fs');
-    fs.writeFileSync(__dirname + '/file.txt', 'Helo');
+    res.write('Обновление расписаний началось');
+    res.end(200);
+});
+
+app.get('/admin', async (req, res) => {
+    if (utils.isFileExists(feedback)) {
+        const file = await utils.readFile(feedback);
+        res.send(file);
+    }
 });
 
 async function postFeedback(req, res) {
