@@ -7,7 +7,7 @@ const {google} = require('googleapis');
 
 // const args = process.argv;
 const args = process.env;
-const SPREADSHEET_ID = args[14];
+const SPREADSHEET_ID = args.SPREADSHEET_ID;
 
 const creds = {
     web: {
