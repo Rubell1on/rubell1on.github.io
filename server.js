@@ -5,27 +5,28 @@ const gOAuth = require('./JS/gOAuth');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
 
-const args = process.argv;
+// const args = process.argv;
+const args = process.env;
 const SPREADSHEET_ID = args[14];
 
 const creds = {
     web: {
-        client_id: args[2],
-        project_id: args[3],
-        auth_uri: args[4],
-        token_uri: args[5],
-        auth_provider_x509_cert_url: args[6],
-        client_secret: args[7],
-        redirect_uris: args[8]
+        client_id: args.client_id,
+        project_id: args.project_id,
+        auth_uri: args.auth_uri,
+        token_uri: args.token_uri,
+        auth_provider_x509_cert_url: args.auth_provider_x509_cert_url,
+        client_secret: args.client_secret,
+        redirect_uris: args.redirect_uris
     }
 };
 
 const token = {
-    access_token: args[9],
-    refresh_token: args[10],
-    scope: args[11],
-    token_type: args[12],
-    expiry_date: Number(args[13]), 
+    access_token: args.access_token,
+    refresh_token: args.refresh_token,
+    scope: args.scope,
+    token_type: args.token_type,
+    expiry_date: Number(args.expiry_date), 
 };
 
 const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.client_secret, creds.web.redirect_uris);
