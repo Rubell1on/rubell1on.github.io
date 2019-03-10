@@ -1,0 +1,15 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "schedule",
+            "program": "${workspaceFolder}/server.js",
+            "args": ["414176877612-78bfdsj1vlfdhbrbkafll5q4k99ac3iv.apps.googleusercontent.com", "schedule-proj-234118", "https://accounts.google.com/o/oauth2/auth", "https://oauth2.googleapis.com/token", "https://www.googleapis.com/oauth2/v1/certs", "JCn66ZIslHMaLZ1e0l5aq6Iq", "http://localhost", "ya29.GlvIBr-pv5-Crg0-DykBhkDqZ4DoWbw3kPC-26PwdzHKWUUXEOv7v3BJT9zCkx3sGr1AihucP96rmPkSZNeEN1_Wpa4J7fdV99k9laAmIDn7ExR9hYqKcefLtdBw", "1/5c7_0MhEyS7qnykJ2gl_0irMJbUizUJl8bch40__s2w", "https://www.googleapis.com/auth/spreadsheets", "Bearer", "1552250573165", "1ycf7FnNUDMlVZozzy70etZAz2akJXHFRxbODLi3Hi14"]
+        }
+    ]
+}
