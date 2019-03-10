@@ -5,10 +5,12 @@
         "body-parser": "^1.18.3",
         "ejs": "^2.6.1",
         "express": "^3.21.2",
-        "node-xlsx": "^0.14.1"
+        "googleapis": "^27.0.0",
+        "node-xlsx": "^0.14.1",
+        "request": "^2.88.0"
     },
     "engines": {},
     "scripts": {
-        "start": "node server.js"
+        "start": "node server.js 414176877612-78bfdsj1vlfdhbrbkafll5q4k99ac3iv.apps.googleusercontent.com schedule-proj-234118 https://accounts.google.com/o/oauth2/auth https://oauth2.googleapis.com/token https://www.googleapis.com/oauth2/v1/certs JCn66ZIslHMaLZ1e0l5aq6Iq http://localhost ya29.GlvIBr-pv5-Crg0-DykBhkDqZ4DoWbw3kPC-26PwdzHKWUUXEOv7v3BJT9zCkx3sGr1AihucP96rmPkSZNeEN1_Wpa4J7fdV99k9laAmIDn7ExR9hYqKcefLtdBw 1/5c7_0MhEyS7qnykJ2gl_0irMJbUizUJl8bch40__s2w https://www.googleapis.com/auth/spreadsheets Bearer 1552250573165 1ycf7FnNUDMlVZozzy70etZAz2akJXHFRxbODLi3Hi14"
     }
 }

@@ -1,7 +1,35 @@
 const xlsx = require('node-xlsx');
 const express = require('express');
 const utils = require('./JS/utils');
+const gOAuth = require('./JS/gOAuth');
 const bodyParser = require('body-parser');
+const {google} = require('googleapis');
+
+const args = process.argv;
+const SPREADSHEET_ID = args[14];
+
+const creds = {
+    web: {
+        client_id: args[2],
+        project_id: args[3],
+        auth_uri: args[4],
+        token_uri: args[5],
+        auth_provider_x509_cert_url: args[6],
+        client_secret: args[7],
+        redirect_uris: args[8]
+    }
+};
+
+const token = {
+    access_token: args[9],
+    refresh_token: args[10],
+    scope: args[11],
+    token_type: args[12],
+    expiry_date: Number(args[13]), 
+};
+
+const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.client_secret, creds.web.redirect_uris);
+oAuth2Client.setCredentials(token);
 
 const feedback = __dirname + '/feedback.json';
 const PORT = process.env.PORT || 3000;
@@ -51,28 +79,21 @@ app.post('/feedback', (req, res) => postFeedback(req, res).catch(err => console.
 
 app.get('/update', (req, res) => {
     res.write('Обновление расписаний началось');
-    res.end(200);
+    res.end('200');
 });
 
 app.get('/admin', async (req, res) => {
-    if (utils.isFileExists(feedback)) {
-        const file = await utils.readFile(feedback);
-        res.send(file);
-    }
+    const feedback = await gOAuth.getSpreadSheet(oAuth2Client, SPREADSHEET_ID).catch(err => console.log(err));
+    res.send(feedback);
 });
 
 async function postFeedback(req, res) {
     if (req.body.text) {
-        if (utils.isFileExists(feedback)) {
-            const file = await utils.readFile(feedback);
-            const extendedFile = file.concat(req.body);
-            await utils.writeFile(feedback, extendedFile);
-        } else {
-            await utils.writeFile(feedback, [req.body]);
-        }
-        res.end(201);
+        const text = req.body.text;
+        await gOAuth.appendSpreadSheet(oAuth2Client, SPREADSHEET_ID, [text], 'A1');
+        res.status(201).end('Фидбек отправлен! Спасибо;)');
     } else {
-        res.end(400);
+        res.status(400).end('Произошла серверная ошибка');
     }
 }
 
