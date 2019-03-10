@@ -91,9 +91,9 @@ async function postFeedback(req, res) {
     if (req.body.text) {
         const text = req.body.text;
         await gOAuth.appendSpreadSheet(oAuth2Client, SPREADSHEET_ID, [text], 'A1');
-        res.status(201).end('Фидбек отправлен! Спасибо;)');
+        res.status(201).send('Фидбек отправлен! Спасибо;)');
     } else {
-        res.status(400).end('Произошла серверная ошибка');
+        res.status(400).send('Произошла серверная ошибка');
     }
 }
 
