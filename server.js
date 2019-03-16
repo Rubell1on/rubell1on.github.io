@@ -5,34 +5,11 @@ const gOAuth = require('./JS/gOAuth');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
 
-// const args = process.argv;
-const args = process.env;
-const SPREADSHEET_ID = args.SPREADSHEET_ID;
-
-const creds = {
-    web: {
-        client_id: args.client_id,
-        project_id: args.project_id,
-        auth_uri: args.auth_uri,
-        token_uri: args.token_uri,
-        auth_provider_x509_cert_url: args.auth_provider_x509_cert_url,
-        client_secret: args.client_secret,
-        redirect_uris: args.redirect_uris
-    }
-};
-
-const token = {
-    access_token: args.access_token,
-    refresh_token: args.refresh_token,
-    scope: args.scope,
-    token_type: args.token_type,
-    expiry_date: Number(args.expiry_date), 
-};
+const {creds, token, SPREADSHEET_ID} = utils.getEnvironment(process.env);
 
 const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.client_secret, creds.web.redirect_uris);
 oAuth2Client.setCredentials(token);
 
-const feedback = __dirname + '/feedback.json';
 const PORT = process.env.PORT || 3000;
 
 const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
@@ -71,27 +48,38 @@ app.get('/', (req, res) => {
 app.get('/schedule', (req, res) => {
     const groupName = req.query.group.toUpperCase();
     if (Object.keys(schedules).includes(groupName))
-        res.render("index.ejs", {schedule: schedules[groupName], groupName});
+        res.render('index.ejs', {schedule: schedules[groupName], groupName});
     else
         res.send(`Расписание по группе ${groupName} не найдено!`);
 });
 
-app.post('/feedback', (req, res) => postFeedback(req, res).catch(err => console.log(err)));
+app.route('/feedback')
+    .get(async (req, res) => {
+        const feedback = await gOAuth.getSpreadSheet(oAuth2Client, SPREADSHEET_ID).catch(err => console.log(err));
+        if (req.query.json) {
+            res.json(feedback);
+        } else {
+            res.render('feedback.ejs');
+        }
+    })
+    .post((req, res) => postFeedback(req, res).catch(err => console.log(err)));
 
 app.get('/update', (req, res) => {
     res.write('Обновление расписаний началось');
     res.end('200');
 });
 
-app.get('/admin', async (req, res) => {
-    const feedback = await gOAuth.getSpreadSheet(oAuth2Client, SPREADSHEET_ID).catch(err => console.log(err));
-    res.send(feedback);
+app.get('/test', (req, res) => {
+    const render = req.query.render;
+    res.render(render);
 });
 
 async function postFeedback(req, res) {
-    if (req.body.text) {
-        const text = req.body.text;
-        await gOAuth.appendSpreadSheet(oAuth2Client, SPREADSHEET_ID, [text], 'A1');
+    if (req.body.message) {
+        const text = req.body.message;
+        const timestamp = req.body.timestamp.replace(/, /g, 'T');
+        const rate = req.body.count;
+        await gOAuth.appendSpreadSheet(oAuth2Client, SPREADSHEET_ID, [text, timestamp, rate], 'A1');
         res.status(201).send('Фидбек отправлен! Спасибо;)');
     } else {
         res.status(400).send('Произошла серверная ошибка');

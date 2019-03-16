@@ -1,0 +1,91 @@
+.top-toolbar {
+    width: 100vw;
+    height: 40px;
+    background: #6577e2;
+}
+
+.top-toolbar>li {
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    width: fit-content;
+    height: 30px;
+    border-radius: 5px;
+    background: #7787e4;
+    padding-left: 5px;
+    padding-right: 5px;
+    line-height: 30px;
+    list-style-type: none;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 200ms ease;
+}
+
+.top-toolbar>li:hover {
+    background: #8597fd;
+}
+
+.group-name {
+    float: left;
+}
+
+.quit-button, .feedback-button {
+    float: right;
+}
+
+.feedback-overlay {
+    padding: 10px;
+}
+
+label[for=feedback-message] {
+    color: white;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#feedback-message {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.feedback-text-wrapper {
+    width: 100%;
+    height: 60px;
+}
+
+.feedback-overlay-window {
+   width: 300px;
+   height: fit-content;
+   background: #7787e4;
+   border-radius: 5px;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   margin-top: -62.5px;
+   margin-left: -150px;
+}
+
+input[type=submit] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-sizing: border-box;
+    height: 30px;
+    transition-property: background, color;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+}
+
+input[type=submit]:hover {
+    background: #6577e2;
+    color: white;
+}

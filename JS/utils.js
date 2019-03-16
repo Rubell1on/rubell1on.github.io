@@ -83,5 +83,29 @@ module.exports = {
     },
     isFileExists: function(path) {
         return fs.existsSync(path);
+    },
+    getEnvironment: function(env) {
+        const SPREADSHEET_ID = env.SPREADSHEET_ID;
+        const creds = {
+            web: {
+                client_id: env.client_id,
+                project_id: env.project_id,
+                auth_uri: env.auth_uri,
+                token_uri: env.token_uri,
+                auth_provider_x509_cert_url: env.auth_provider_x509_cert_url,
+                client_secret: env.client_secret,
+                redirect_uris: env.redirect_uris
+            }
+        };
+
+        const token = {
+            access_token: env.access_token,
+            refresh_token: env.refresh_token,
+            scope: env.scope,
+            token_type: env.token_type,
+            expiry_date: Number(env.expiry_date), 
+        };
+
+        return {creds, token, SPREADSHEET_ID};
     } 
 };

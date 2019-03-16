@@ -9,7 +9,21 @@
             "request": "launch",
             "name": "schedule",
             "program": "${workspaceFolder}/server.js",
-            "args": ["414176877612-78bfdsj1vlfdhbrbkafll5q4k99ac3iv.apps.googleusercontent.com", "schedule-proj-234118", "https://accounts.google.com/o/oauth2/auth", "https://oauth2.googleapis.com/token", "https://www.googleapis.com/oauth2/v1/certs", "JCn66ZIslHMaLZ1e0l5aq6Iq", "http://localhost", "ya29.GlvIBr-pv5-Crg0-DykBhkDqZ4DoWbw3kPC-26PwdzHKWUUXEOv7v3BJT9zCkx3sGr1AihucP96rmPkSZNeEN1_Wpa4J7fdV99k9laAmIDn7ExR9hYqKcefLtdBw", "1/5c7_0MhEyS7qnykJ2gl_0irMJbUizUJl8bch40__s2w", "https://www.googleapis.com/auth/spreadsheets", "Bearer", "1552250573165", "1ycf7FnNUDMlVZozzy70etZAz2akJXHFRxbODLi3Hi14"]
+            "env": {
+                "access_token": "ya29.GlvIBr-pv5-Crg0-DykBhkDqZ4DoWbw3kPC-26PwdzHKWUUXEOv7v3BJT9zCkx3sGr1AihucP96rmPkSZNeEN1_Wpa4J7fdV99k9laAmIDn7ExR9hYqKcefLtdBw",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "client_id": "414176877612-78bfdsj1vlfdhbrbkafll5q4k99ac3iv.apps.googleusercontent.com",
+                "client_secret": "JCn66ZIslHMaLZ1e0l5aq6Iq",
+                "expiry_date": "1552250573165",
+                "project_id": "schedule-proj-234118",
+                "redirect_uris": "http://localhost",
+                "refresh_token": "1/5c7_0MhEyS7qnykJ2gl_0irMJbUizUJl8bch40__s2w",
+                "scope": "https://www.googleapis.com/auth/spreadsheets",
+                "SPREADSHEET_ID": "1ycf7FnNUDMlVZozzy70etZAz2akJXHFRxbODLi3Hi14",
+                "token_type": "Bearer",
+                "token_uri": "https://oauth2.googleapis.com/token",
+            }
         }
     ]
 }

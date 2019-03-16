@@ -1,0 +1,28 @@
+.rate {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    /* background: orange; */
+    background: url(/public/IMG/ratingrankin.png);
+    cursor: pointer;
+    background-size: 153px;
+    
+}
+
+.rate-wrapper {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.rate#id1 {
+    background-position-x: -31px;
+}
+.rate#id2 {
+    background-position-x: -62px;
+}
+.rate#id3 {
+    background-position-x: -92px;
+}
+.rate#id4 {
+    background-position-x: -122px;
+}
