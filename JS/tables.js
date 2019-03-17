@@ -109,11 +109,11 @@ function createFeedbackOverlay() {
             url: '/feedback',
             type: 'POST',
             data: { message, timestamp, count},
-            success: () => {
-                alert('Отзыв отправлен!');
+            success: (data) => {
+                alert(data);
                 $('.feedback').animate({'opacity': '0'}, TIMER, () => $('.feedback').remove());
             },
-            error: (err) => alert(`Во время отправки произошла ошибка! ${err}`)
+            error: (err) => alert(err.responseText)
         });
     });
 }

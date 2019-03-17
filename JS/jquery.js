@@ -217,6 +217,15 @@ jQuery.fn = jQuery.prototype = {
 		return this.prevObject || this.constructor();
 	},
 
+	reduce: function(arr, valueInitial, fnReduce)
+	{
+		jQuery.each( arr, function(i, value)
+		{
+			valueInitial = fnReduce.apply(value, [valueInitial, i, value]);
+		});
+		return valueInitial;
+	},
+
 	// For internal use only.
 	// Behaves like an Array's method, not like a jQuery method.
 	push: push,
