@@ -34,6 +34,7 @@
     padding-right: 5px;
     border-bottom: 3px solid #5065dd;
     word-wrap: break-word;
+    border-radius: 5px;
 }
 
 .timestamp {
