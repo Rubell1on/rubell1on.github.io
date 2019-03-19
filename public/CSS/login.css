@@ -22,10 +22,14 @@
 }
 
 #group {
+    -webkit-appearance: none;
+    -moz-appearence: none;
     font-size: 20px;
     border: 1px solid grey;
     border-top-left-radius:  5px;
     border-top-right-radius: 5px;
+    border-bottom-left-radius:  0px;
+    border-bottom-right-radius: 0px;
 }
 
 .submit {
@@ -35,6 +39,8 @@
     font-size: 18px;
     background: rgb(173, 173, 173);
     border: 0px;
+    border-top-left-radius:  0px;
+    border-top-right-radius: 0px;
     border-bottom-left-radius:  5px;
     border-bottom-right-radius: 5px;
     transition: background, color 200ms ease;

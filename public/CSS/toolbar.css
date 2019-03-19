@@ -47,11 +47,15 @@ label[for=feedback-message] {
 }
 
 #feedback-message {
+    -webkit-appearance: none;
+    -moz-appearence: none;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    border-bottom-left-radius:  0px;
+    border-bottom-right-radius: 0px;
 }
 
 .feedback-text-wrapper {
@@ -78,6 +82,8 @@ input[type=submit] {
     width: 100%;
     box-sizing: border-box;
     border: 0;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     box-sizing: border-box;
@@ -86,7 +92,6 @@ input[type=submit] {
     transition-duration: 200ms;
     transition-timing-function: ease;
     background: rgb(175, 175, 175);
-
 }
 
 input[type=submit]:hover {
