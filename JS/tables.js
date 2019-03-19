@@ -132,8 +132,10 @@ function hideTable(windowWidth, size) {
     if (windowWidth < size) {
         if(currWeek === 1) {
             $('#week-2').css('display', 'none');
+            $('.first-week').css('background', '#6577e2');
         } else if(currWeek === 2) {
             $('#week-1').css('display', 'none');
+            $('.second-week').css('background', '#ee8d0f');
         }
     } else if (windowWidth > size) {
         if(currWeek === 1) {
