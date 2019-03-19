@@ -72,6 +72,8 @@ label[for=feedback-message] {
 }
 
 input[type=submit] {
+    -webkit-appearance: none;
+    -moz-appearence: none;
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -83,6 +85,8 @@ input[type=submit] {
     transition-property: background, color;
     transition-duration: 200ms;
     transition-timing-function: ease;
+    background: rgb(175, 175, 175);
+
 }
 
 input[type=submit]:hover {

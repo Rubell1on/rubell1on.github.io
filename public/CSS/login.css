@@ -29,7 +29,10 @@
 }
 
 .submit {
-    font-size: 16px;
+    -webkit-appearance: none;
+    -moz-appearence: none;
+    cursor: pointer;
+    font-size: 18px;
     background: rgb(173, 173, 173);
     border: 0px;
     border-bottom-left-radius:  5px;
