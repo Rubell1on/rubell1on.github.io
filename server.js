@@ -77,9 +77,14 @@ app.get('/test', (req, res) => {
 app.route('/parser')
     .get((req, res) => res.render('parser.ejs'))
     .post((req, res) => {
-        const parsed = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx');
-        const filtered = parsed.filter(list => list.data.length);
-        res.status(200).json(filtered);
+        if (!Object.keys(req.query).length) {
+            const parsed = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx');
+            const filtered = parsed.filter(list => list.data.length);
+            res.status(200).json(filtered);
+        } else {
+            
+        }
+        
     });
 
 async function postFeedback(req, res) {
