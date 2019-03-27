@@ -41,7 +41,7 @@ module.exports = {
                         acc[enumer[acc.week]][acc.day] = {};
                 }
 
-                if (curr[index] && ind > 2) {
+                if (ind > 2) {
                     if (curr[2]) {
                         acc.begin = curr[2];
                         acc.end = curr[3];
@@ -50,6 +50,9 @@ module.exports = {
                     if (curr[1]) {
                         acc.num = curr[1];
                     }
+                }
+
+                if (curr[index] && ind > 2) {
                     acc[enumer[acc.week]][acc.day][acc.num] = {
                         begin: acc.begin,
                         end: acc.end,
