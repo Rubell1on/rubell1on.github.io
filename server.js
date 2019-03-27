@@ -23,13 +23,16 @@ app.use('/public', express.static('public'));
 app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
 app.use('/feedback', express.static('feedback'));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json({limit: '100mb'}));
+app.use(bodyParser.urlencoded({limit: '100mb', extended: true}));
 app.listen(PORT, () => {
     console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
 });
 
+const dOTW = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА'];
+const enumer = {'I': 1, 'II': 2};
 const groupNames = utils.getGroupNames(obj);
-const schedules = utils.getSchedules(groupNames, obj);
+const schedules = utils.getSchedules(groupNames, obj, dOTW, enumer);
 
 const temp = Object.entries(schedules).reduce((acc, group) => {
     const name = group[0];
@@ -77,12 +80,17 @@ app.get('/test', (req, res) => {
 app.route('/parser')
     .get((req, res) => res.render('parser.ejs'))
     .post((req, res) => {
-        if (!Object.keys(req.query).length) {
+        if (!Object.keys(req.body).length) {
             const parsed = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx');
             const filtered = parsed.filter(list => list.data.length);
             res.status(200).json(filtered);
         } else {
-            
+            const body = JSON.parse(req.body.data);
+            const template = JSON.parse(req.body.template);
+            const groupNames = template.group.names;
+            const dOTW = template.dayOfTheWeek.values;
+            // const enumer = template.weekNum;
+            const schedule = utils.getSchedules(groupNames, body, dOTW, enumer);
         }
         
     });

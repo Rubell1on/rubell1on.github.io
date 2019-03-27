@@ -22,10 +22,7 @@ module.exports = {
             return acc;
         },[]);
     },
-    getSchedules: function (groupNames, obj) {
-        const dOTW = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА'];
-        const enumer = {'I': 1, 'II': 2};
-
+    getSchedules: function (groupNames, obj, dOTW, enumer) {
         return groupNames.reduce((acc, group) => {
             const index = group.ind;
             acc[group.name] = obj[0].data.reduce((acc, curr, ind) => {
