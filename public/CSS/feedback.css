@@ -50,3 +50,12 @@
 .block {
     float: right;
 }
+
+@media (max-width: 515px) {
+    .wrapper {
+        width: 100%;
+        padding-left: 7px;
+        padding-right: 7px;
+        box-sizing: border-box;
+    }
+}
