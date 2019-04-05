@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "dependencies": {
         "body-parser": "^1.18.3",
+        "cheerio": "^1.0.0-rc.2",
         "ejs": "^2.6.1",
         "express": "^4.16.4",
         "googleapis": "^27.0.0",
