@@ -1,4 +1,5 @@
 const fs = require('fs');
+const request = require('request');
 
 module.exports = {
     deleteUselessAttrs: function (obj, arr) {
@@ -29,8 +30,8 @@ module.exports = {
         return groupNames.reduce((acc, group) => {
             const index = group.ind;
             acc[group.name] = obj[0].data.reduce((acc, curr, ind) => {
-                if (dOTW.includes(curr[0]))
-                    acc.day = curr[0];
+                if (curr[0] && dOTW.includes(String(curr[0]).toUpperCase()))
+                    acc.day = String(curr[0]).toUpperCase();
             
                 if (Object.keys(enumer).includes(curr[4])) {
                     acc.week = curr[4];
@@ -109,6 +110,28 @@ module.exports = {
             expiry_date: Number(env.expiry_date), 
         };
 
-        return {creds, token, SPREADSHEET_ID};
-    } 
+        const yandex_token = env.yandex_token;
+
+        return {creds, token, SPREADSHEET_ID, yandex_token};
+    },
+    get: function (uri) {
+        const options = { uri };
+    
+        if (arguments.length > 1) options.encoding = arguments[1];
+    
+        return new Promise((resolve, reject) => {
+            request(options, (err, res, body) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(body);
+                }
+            });
+        }); 
+    },
+    getHalfYear: function () {
+        const month = new Date().getMonth();
+        const springMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        return springMonth.includes(month) ? 'spring': 'autumn'; 
+    }
 };
