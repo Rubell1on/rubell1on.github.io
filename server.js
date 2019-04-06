@@ -17,7 +17,7 @@ oAuth2Client.setCredentials(token);
 const PORT = process.env.PORT || 3000;
 let schedules = {};
 
-async function parseSchedule() {
+async function parseSchedule(callback) {
     const list = await yandex.getList();
     const dirList = yandex.getDirList(list);
     const halfYear = utils.getHalfYear();
@@ -101,13 +101,19 @@ async function parseSchedule() {
         console.log(`Закончен парсинг ${ind + 1} объекта`);
         return Object.assign(acc, temp);
     }, {});
+
+    callback();
 }
 
-// const obj = xlsx.parse(__dirname + '/xls/IK_1k_mag_18_19_vesna.xlsx'); 
-// const obj = xlsx.parse(__dirname + '/xls/IEP-1-kurs-2-sem.xlsx'); 
-// const obj = xlsx.parse(__dirname + '/xls/IK_1k_18_19_vesna.xlsx'); 
+ 
 
 app = express();
+
+parseSchedule(() => {
+    app.listen(PORT, () => {
+        console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+    });
+});
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
@@ -115,23 +121,6 @@ app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
 app.use('/feedback', express.static('feedback'));
 app.use(bodyParser.urlencoded({extended: false}));
-app.listen(PORT, () => {
-    parseSchedule();
-    console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-});
-
-// const groupNames = utils.getGroupNames(obj);
-// const schedules = utils.getSchedules(groupNames, obj);
-
-// const temp = Object.entries(schedules).reduce((acc, group) => {
-//     const name = group[0];
-//     const schedule = group[1];
-
-//     utils.deleteUselessAttrs(schedule, ['num', 'begin', 'end', 'day', 'week']);
-//     acc[name] = schedule;
-    
-//     return acc;
-// }, {});
 
 app.get('/', (req, res) => {
     res.render("login.ejs");
