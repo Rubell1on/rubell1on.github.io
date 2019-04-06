@@ -17,7 +17,7 @@ oAuth2Client.setCredentials(token);
 const PORT = process.env.PORT || 3000;
 let schedules = {};
 
-async function parseSchedule(callback) {
+async function parseSchedule() {
     const list = await yandex.getList();
     const dirList = yandex.getDirList(list);
     const halfYear = utils.getHalfYear();
@@ -101,19 +101,19 @@ async function parseSchedule(callback) {
         console.log(`Закончен парсинг ${ind + 1} объекта`);
         return Object.assign(acc, temp);
     }, {});
-
-    callback();
 }
 
  
 
 app = express();
 
-parseSchedule(() => {
-    app.listen(PORT, () => {
-        console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-    });
-});
+parseSchedule()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+        });
+    })
+    .catch(err => console.error(err));
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
