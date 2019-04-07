@@ -1,0 +1,134 @@
+.card {
+  width: 40px;
+  float: left;
+}
+
+.phone {
+  float: left;
+  height: 30px;
+}
+
+.popup-wrapper {
+    opacity: 0;
+    padding: 15px;
+    width: 300px;
+    position: absolute;
+    background: rgb(219, 219, 219);
+    border-radius: 10px;
+    left: calc(50vw - 165px);
+    top: calc(50vh - 206px);
+}
+
+.popup-picture {
+    position: relative;
+    display: block;
+    height: 220px;
+    background: url(/public/IMG/credit_card.png);
+    background-size: 330px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.popup-message {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: justify;
+    margin-bottom: 10px;
+}
+
+.popup-message > p > b {
+  display: block;
+  line-height: 25px;
+  padding-left: 45px;
+}
+
+.popup-message > p > b:last-child {
+  display: block;
+  line-height: 30px;
+  padding-left: 20px;
+}
+
+.popup-message > p:first-child {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+.popup-message > p {
+    font-size: 16px;
+    padding-bottom: 10px;
+}
+
+#checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 25px;
+    width: 25px;
+}
+
+.popup-checkbox > label {
+    display: block;
+    line-height: 25px;
+    padding-left: 30px;
+}
+
+.popup-button {
+    width: 100px;
+    height: 30px;
+    cursor: pointer;
+    background: #eee;
+    text-align: center;
+    margin: 0 auto;
+    line-height: 30px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background, color 200ms ease;
+}
+
+.popup-button:hover {
+    background: #6577e2;
+    color: white;
+}
+
+.checkmark {
+    display: inline-block;
+    float: left;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 5px;
+  }
+
+  .popup-checkbox:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+
+  .popup-checkbox input:checked ~ .checkmark {
+    background-color: #6577e2;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .popup-checkbox input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .popup-checkbox .checkmark:after {
+    margin-left: 9px;
+    margin-top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+

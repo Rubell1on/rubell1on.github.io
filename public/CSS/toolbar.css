@@ -98,3 +98,12 @@ input[type=submit]:hover {
     background: #6577e2;
     color: white;
 }
+
+.donations {
+    float: right;
+}
+
+.donations > img {
+    height: 20px;
+    padding-top: 5px;
+}
