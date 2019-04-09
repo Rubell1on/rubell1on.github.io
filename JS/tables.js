@@ -131,11 +131,17 @@ function getCurrWeek() {
 function hideTable(windowWidth, size) {
     if (windowWidth < size) {
         if(currWeek === 1) {
+            let iconString = '<link rel="apple-touch-icon" href="/public/IMG/icon_blue_180x180.png" type="image/png">' +
+            '<link rel="icon" href="/public/IMG/icon_blue.png" type="image/png">';
             $('#week-2').css('display', 'none');
             $('.first-week').css('background', '#6577e2');
+            $('head').append(iconString);
         } else if(currWeek === 2) {
+            let iconString = '<link rel="apple-touch-icon" href="/public/IMG/icon_orange_180x180.png" type="image/png">' +
+            '<link rel="icon" href="/public/IMG/icon_orange.png" type="image/png">';
             $('#week-1').css('display', 'none');
             $('.second-week').css('background', '#ee8d0f');
+            $('head').append(iconString);
         }
     } else if (windowWidth > size) {
         if(currWeek === 1) {
