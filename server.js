@@ -112,16 +112,20 @@ parseSchedule()
         app.listen(PORT, () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
             setInterval(() => {
-                utils.get('https://schedule.okht.ru');
-                const date = {
-                    y: new Date().getFullYear(),
-                    m: new Date().getMonth() + 1,
-                    d: new Date().getDate(),
-                    h: new Date().getHours(),
-                    M: new Date().getMinutes(),
-                    s: new Date().getSeconds()
+                refreshPage().catch(e => console.log(e));
+
+                async function refreshPage() {
+                    await utils.get('https://schedule-p.herokuapp.com/');
+                    const date = {
+                        y: new Date().getFullYear(),
+                        m: new Date().getMonth() + 1,
+                        d: new Date().getDate(),
+                        h: new Date().getHours(),
+                        M: new Date().getMinutes(),
+                        s: new Date().getSeconds()
+                    }
+                    console.log(`Обновлено ${date.y}-${date.m}-${date.d} ${date.h}:${date.M}:${date.s}`);
                 }
-                console.log(`Обновлено ${date.y}-${date.m}-${date.d} ${date.h}:${date.M}:${date.s}`);
             }, 300000);
         });
     })
