@@ -13,13 +13,17 @@
     <% include blocks/toolbar%>
     <div class="wrapper">
         <div class="controls">
-            <div class="first-week">Первая неделя</div>
-            <div class="second-week">Вторая неделя</div>
+            <div class="first-week">Нечетная неделя</div>
+            <div class="second-week">Четная неделя</div>
         </div>
         <% for (week in schedule) {%>
             <table class="tbl" id="week-<%= week%>">
                 <tr>
-                    <td class="week-str"colspan="2">Неделя <%=week%></td>
+                    <% if (week === '1') {%>
+                        <td class="week-str"colspan="2">Нечетная неделя </td>
+                    <%} else {%>
+                        <td class="week-str"colspan="2">Четная неделя </td>
+                    <%}%>
                 </tr>
                 <% for (day in schedule[week]) {%>
                     <% if (Object.keys(schedule[week][day]).length > 0) {%>

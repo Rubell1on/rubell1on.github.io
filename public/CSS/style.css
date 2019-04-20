@@ -5,6 +5,11 @@
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
+.week-str {
+    width: 250px;
+    text-align: left;
+}
+
 .wrapper {
     opacity: 0;
     padding-top: 10px;

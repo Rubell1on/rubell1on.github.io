@@ -1,5 +1,6 @@
-if(localStorage.length)
-    location.href = localStorage.getItem('url');
+const storedUrl = localStorage.getItem('url');
+if(storedUrl)
+    location.href = storedUrl;
 
 $(() => {
     $('body').css('opacity', '0')
