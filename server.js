@@ -111,6 +111,7 @@ parseSchedule()
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+            setInterval(() => utils.get('https://schedule.okht.ru'), 600000);
         });
     })
     .catch(err => console.error(err));
