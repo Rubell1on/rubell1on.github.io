@@ -111,7 +111,18 @@ parseSchedule()
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-            setInterval(() => utils.get('https://schedule.okht.ru'), 600000);
+            setInterval(() => {
+                utils.get('https://schedule.okht.ru');
+                const date = {
+                    y: new Date().getFullYear(),
+                    m: new Date().getMonth() + 1,
+                    d: new Date().getDate(),
+                    h: new Date().getHours(),
+                    M: new Date().getMinutes(),
+                    s: new Date().getSeconds()
+                }
+                console.log(`Обновлено ${date.y}-${date.m}-${date.d} ${date.h}:${date.M}:${date.s}`);
+            }, 300000);
         });
     })
     .catch(err => console.error(err));
