@@ -44,8 +44,8 @@ module.exports = {
 
                 if (ind > 2) {
                     if (curr[2]) {
-                        acc.begin = curr[2];
-                        acc.end = curr[3];
+                        acc.begin = curr[2] ? curr[2].replace('-', ':') : curr[2];
+                        acc.end = curr[3] ? curr[3].replace('-', ':') : curr[3];
                     }
 
                     if (curr[1]) {
@@ -133,5 +133,14 @@ module.exports = {
         const month = new Date().getMonth();
         const springMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         return springMonth.includes(month) ? 'spring': 'autumn'; 
+    },
+    getCurrWeek: function () {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+        const oneWeek = 1000 * 60 * 60 * 24 * 7;
+        const currWeek = Math.floor(diff / oneWeek) + 1;
+    
+        return currWeek;
     }
 };

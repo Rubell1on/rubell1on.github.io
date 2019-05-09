@@ -94,21 +94,27 @@
 }
 
 .overlay {
-    position: absolute;
+    position: fixed;
     width: 100vw;
     height: 100vh;
     z-index: 1;
+    background: gray;
+    opacity: 0;
+    top: 40px;
 }
 
 .overlay-window {
+    position: fixed;
     width: 250px;
     height: 150px;
-    background: grey;
+    background: #7787e4;
     color: white;
     margin-left: calc(50vw - 125px);
     margin-top: calc(50vh - 75px);
     line-height: 50px;
+    z-index: 2;
     border-radius: 5px;
+
 }
 
 .overlay-window>div {
@@ -120,6 +126,12 @@
 
 .overlay-window>div:last-child {
     border-bottom: 0;
+}
+
+.response-message {
+    text-align: center;
+    font-size: 30px;
+    padding: 10px;
 }
 
 @media (max-width: 1015px) {
