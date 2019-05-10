@@ -1,0 +1,20 @@
+.slide-button {
+    padding: 2.5px;
+    width: 50px;
+    height: 25px;
+    background: white;
+    box-sizing: border-box;
+    border-radius: 15px;
+    transition: opacity 200ms ease;
+}
+
+.slide-button-dot {
+    background: #8597fd;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.slide-button:hover {
+    opacity: 1;
+}

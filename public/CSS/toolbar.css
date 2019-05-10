@@ -145,13 +145,64 @@ input[type=submit]:hover {
     left: -170px;
     top: 40px;
     background: #6577e2;
-    width: 170px;
+    width: 200px;
     border-bottom-right-radius: 5px;
     z-index: 2;
 }
 
+.settings-background {
+    position: fixed;
+    top: 40px;
+    width: 100vw;
+    height: 100vh;
+    background: gray;
+    opacity: 0;
+    z-index: 1;
+}
+
+.settings-window {
+    position: fixed;
+    background: #6577e2;
+    top: calc(50vh - 40px);
+    left: calc(50vw - 250px);
+    width: 500px;
+    margin: 0 auto;
+    z-index: 2;
+    border-radius: 5px;
+    opacity: 0;
+}
+
+.settings-window > ul {
+    /* padding: 5px; */
+    list-style-type: none;
+}
+
+.settings-window > ul > li {
+    height: 40px;
+    width: 100%;
+    color: white;
+    padding-left: 5px;
+    border-bottom: 1px solid white;
+    line-height: 40px;
+    box-sizing: border-box;
+    transition: background 200ms ease;
+}
+
+.settings-window > ul > li:hover {
+    background: #7787e4;
+}
+
+.settings-window > ul > li:last-child {
+    border-bottom: 0px;
+}
+
+.sld-1, .sld-2 {
+    float: right;
+    margin-top: 7px;
+    margin-right: 5px;
+}
+
 .left-menu > ul > li {
-    height: 30px;
     margin: 5px;
     padding-left: 5px;
     line-height: 30px;
@@ -169,7 +220,6 @@ input[type=submit]:hover {
 }
 
 
-
 .left-menu > ul > li:first-child {
     height: 20px;
     line-height: 20px;
@@ -178,4 +228,18 @@ input[type=submit]:hover {
     text-align: center;
     padding: 0px;
     margin: 0px;
+}
+
+@media (max-width: 515px) {
+    .settings-window {
+        position: fixed;
+        background: #6577e2;
+        top: calc(45vh - 40px);
+        left: calc(50vw - 175px);
+        width: 350px;
+        margin: 0 auto;
+        z-index: 2;
+        border-radius: 5px;
+        opacity: 0;
+    }
 }

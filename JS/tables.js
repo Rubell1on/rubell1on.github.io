@@ -1,6 +1,6 @@
 const TIMER = 200;
 const currWeek = currWeekNum%2 ? 1: 2;
-localStorage.setItem('url', window.location.href);
+if (!localStorage.getItem('url')) localStorage.setItem('url', window.location.href);
 
 let windowWidth = $(window).width();
 
