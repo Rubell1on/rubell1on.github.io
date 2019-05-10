@@ -109,7 +109,7 @@ app = express();
 
 parseSchedule()
     .then(() => {
-        app.listen(PORT, '192.168.0.102', () => {
+        app.listen(PORT, () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
             setInterval(() => {
                 refreshPage().catch(e => console.log(e));
