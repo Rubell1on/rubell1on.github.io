@@ -142,5 +142,36 @@ module.exports = {
         const currWeek = Math.floor(diff / oneWeek) + 1;
     
         return currWeek;
+    },
+    getCurrStudyWeek: function() {
+        const halfYear = this.getHalfYear();
+        let subtrahend;
+        if (halfYear === 'spring') {
+            subtrahend = 6;
+        } else if (halfYear === 'autumn') {
+            subtrahend = 34;
+        }
+
+        return this.getCurrWeek() - subtrahend;
+    }, 
+    filterPairsByWeek: function(schedule, currWeek) {
+        return Object.entries(schedule).reduce((acc1, week, ind) => {
+            acc1[ind+1] = Object.entries(week[1]).reduce((acc2, day) => {
+                acc2[day[0]] = Object.entries(day[1]).reduce((acc3, pair) => {
+                    const regexp = new RegExp(`${currWeek}`, 'g');
+                    if (pair[1].name.match(/(\d{1,2},?н?.?)/g)) {
+                        if (pair[1].name.match(regexp)) {
+                            acc3[pair[0]] = pair[1];
+                            return acc3;
+                        } else return acc3;
+                    } else {
+                        acc3[pair[0]] = pair[1];
+                        return acc3;
+                    }
+                }, {});
+                return acc2;
+            }, {});
+            return acc1;
+        }, {});
     }
 };

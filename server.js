@@ -148,24 +148,27 @@ app.get('/schedule', (req, res) => {
     const groupName = req.query.group.toUpperCase();
     const current = req.query.current;
     if (Object.keys(schedules).includes(groupName)) {
+        const date = new Date();
+        const day = date.getDate();
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        const d = new Date(year, month, day).getDay();
+        const currentDay =  dotw[d];
+        const currWeekNum = utils.getCurrWeek();
+        const currStudyWeekNum = utils.getCurrStudyWeek();
+        const currWeek = currWeekNum%2 ? 1: 2;
+
+        const filteredSchedule = utils.filterPairsByWeek(schedules[groupName], currStudyWeekNum);
         if (current) {
-            const date = new Date();
-            const day = date.getDate();
-            const month = date.getMonth();
-            const year = date.getFullYear();
-            const d = new Date(year, month, day).getDay();
-            const currentDay =  dotw[d];
-            const currWeekNum = utils.getCurrWeek();
-            const currWeek = currWeekNum%2 ? 1: 2;
-            if (schedules[groupName][currWeek] && Object.keys(schedules[groupName][currWeek][currentDay]) != false) {
+            if (filteredSchedule[currWeek] && Object.keys(filteredSchedule[currWeek][currentDay]) != false) {
                 const currSchedule = {};
                 currSchedule[currWeek] = {};
-                currSchedule[currWeek][currentDay] = schedules[groupName][currWeek][currentDay];
+                currSchedule[currWeek][currentDay] = filteredSchedule[currWeek][currentDay];
                 res.render('index.ejs', {schedule: currSchedule, groupName});
             } else {
                 res.render('index.ejs', {schedule: undefined, groupName});
             }
-        } else res.render('index.ejs', {schedule: schedules[groupName], groupName});
+        } else res.render('index.ejs', {schedule: filteredSchedule, groupName});
     } else res.send(`Расписание по группе ${groupName} не найдено!`);
 });
 
