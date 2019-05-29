@@ -102,8 +102,8 @@ module.exports = class yandexApi {
                 if (!acc.includes(dirName)) {
                     acc.push(dirName);  
                 }
-                return acc;
             }
+            return acc;
         }, []);
     }
 }
