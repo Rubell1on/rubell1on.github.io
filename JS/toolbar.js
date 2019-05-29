@@ -1,4 +1,12 @@
-const currWeekNum = getCurrWeek();
+const halfYear = getHalfYear();
+let subtrahend;
+if (halfYear === 'spring') {
+    subtrahend = 6;
+} else if (halfYear === 'autumn') {
+    subtrahend = 34;
+}
+
+const currWeekNum = getCurrWeek() - subtrahend;
 $('.toolbar-week-number').text(`#${currWeekNum}`);
 
 if (localStorage.getItem('hideDonations') === 'true') $('.donations').css('display', 'none');
@@ -12,6 +20,12 @@ function getCurrWeek() {
     const currWeek = Math.floor(diff / oneWeek) + 1;
 
     return currWeek;
+}
+
+function getHalfYear() {
+    const month = new Date().getMonth();
+    const springMonth = [0, 1, 2, 3, 4, 5, 6, 7];
+    return springMonth.includes(month) ? 'spring': 'autumn'; 
 }
 
 const group = $('.group-name');
