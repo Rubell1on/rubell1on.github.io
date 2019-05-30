@@ -157,13 +157,12 @@ module.exports = {
         },[]);
     },
     getSchedules: function (groupNames, obj) {
-        const dOTW = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА'];
         const enumer = {'I': 1, 'II': 2};
 
         return groupNames.reduce((acc, group) => {
             const index = group.ind;
             acc[group.name] = obj[0].data.reduce((acc, curr, ind) => {
-                if (curr[0] && dOTW.includes(String(curr[0]).toUpperCase()))
+                if (curr[0] && this.dOTW.includes(String(curr[0]).toUpperCase()))
                     acc.day = String(curr[0]).toUpperCase();
             
                 if (Object.keys(enumer).includes(curr[4])) {
@@ -283,6 +282,16 @@ module.exports = {
             return acc1;
         }, {});
     },
+    getDateParams: function() {
+        const date = new Date();
+        const day = date.getDate();
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        const d = new Date(year, month, day).getDay();
+        const currWeekNum = this.getCurrWeek();
+        return {currWeek: currWeekNum%2 ? 1: 2, currentDay: this.dOTW[d], currStudyWeekNum: this.getCurrStudyWeek()};
+    },
     parseSchedule,
-    refreshPage
+    refreshPage,
+    dOTW: ['ВОСКРЕСЕНЬЕ', 'ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА']
 };
