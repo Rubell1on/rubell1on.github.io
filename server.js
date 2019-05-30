@@ -41,25 +41,19 @@ app.get('/schedule', (req, res) => {
     const groupName = req.query.group.toUpperCase();
     const current = req.query.current;
     if (schedules.hasOwnProperty(groupName)) {
-        const {currWeek, currentDay, currStudyWeekNum} = utils.getDateParams();
+        const {currStudyWeekNum} = utils.getDateParams();
         const filteredSchedule = utils.filterPairsByWeek(schedules[groupName], currStudyWeekNum);
         if (current) {
-            if (filteredSchedule[currWeek] && Object.keys(filteredSchedule[currWeek][currentDay]) != false) {
-                const currSchedule = {};
-                currSchedule[currWeek] = {};
-                currSchedule[currWeek][currentDay] = filteredSchedule[currWeek][currentDay];
-                res.render('index.ejs', {schedule: currSchedule, groupName});
-            } else {
-                res.render('index.ejs', {schedule: undefined, groupName});
-            }
+            const currSchedule = utils.getCurrentSchedule(filteredSchedule);
+            res.render('index.ejs', {schedule: currSchedule, groupName});
         } else res.render('index.ejs', {schedule: filteredSchedule, groupName});
     } else res.send(`Расписание группы ${groupName} не найдено!`);
 });
 
-app.get('/schedule/api', (req, res) => {
+app.get('/api', (req, res) => {
     const query = req.query;
     const queryKeys = Object.keys(query);
-    const {currWeek, currentDay, currStudyWeekNum} = utils.getDateParams();
+    const {currStudyWeekNum} = utils.getDateParams();
     if (!queryKeys.length) res.json(schedules);
     else {
         if (query.hasOwnProperty('group')) {
@@ -68,20 +62,30 @@ app.get('/schedule/api', (req, res) => {
                 let groupSched = schedules[groupName];
                 if (query.filtered) groupSched = utils.filterPairsByWeek(groupSched, currStudyWeekNum);
                 if (query.hasOwnProperty('current')) {
-                    if (groupSched[currWeek] && Object.keys(groupSched[currWeek][currentDay]) != false) {
-                        const currSchedule = {};
-                        currSchedule[currWeek] = {};
-                        currSchedule[currWeek][currentDay] = groupSched[currWeek][currentDay];
-                        res.json({schedule: currSchedule, groupName});
-                    } else {
-                        res.json({schedule: undefined, groupName});
-                    }
+                    currSchedule = utils.getCurrentSchedule(groupSched);
+                    res.json({schedule: currSchedule, groupName});
                 }
                 res.json({schedule: groupSched, groupName});
                 
             } else {
                 res.status(404).send(`Расписание группы ${groupName} не найдено!`);
             } 
+        } else if (query.hasOwnProperty('teacher')) {
+            let teacher = JSON.parse(query.teacher);
+            if (typeof teacher === 'string') teacher = [teacher];
+            
+            let schedule = utils.getDataByField(schedules, 'teacher', teacher);
+
+            if (query.current) {
+                schedule = Object.entries(schedule).reduce((acc, group) => {
+                    const temp = utils.getCurrentSchedule(group[1]);
+                    if (temp) acc[group[0]] = temp;
+                    return acc;
+                }, {});
+            }
+
+            if (utils.isEmpty(schedule)) res.status(404).send(`Преподаватель(ли) ${teacher.join(', ')} не найден(ы)`);
+            else res.json(schedule);   
         }
     }
 });

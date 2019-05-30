@@ -291,6 +291,47 @@ module.exports = {
         const currWeekNum = this.getCurrWeek();
         return {currWeek: currWeekNum%2 ? 1: 2, currentDay: this.dOTW[d], currStudyWeekNum: this.getCurrStudyWeek()};
     },
+    isEmpty: function(object) {
+        return JSON.stringify(object) == '{}';
+    },
+    getDataByField: function(schedules, param, fieldName) {
+        return Object.entries(schedules).reduce((acc1, groups) => {
+            temp1 = Object.entries(groups[1]).reduce((acc2, weeks) => {
+                temp2 = Object.entries(weeks[1]).reduce((acc3, days) => {
+                    temp3 = Object.entries(days[1]).reduce((acc4, pairs) => {
+                        fieldName.forEach((field) => {
+                            if (pairs[1][param] && pairs[1][param].match(field)) acc4[pairs[0]] = pairs[1];
+                        });
+                        
+                        return acc4;
+                    }, {});
+                    if (!this.isEmpty(temp3)) acc3[days[0]] = temp3;
+
+                    return acc3;
+                }, {});
+                if (!this.isEmpty(temp2)) acc2[weeks[0]] = temp2;
+
+                return acc2;
+            }, {});
+            if (!this.isEmpty(temp1)) acc1[groups[0]] = temp1;
+
+            return acc1;
+        }, {});
+    },
+    getCurrentSchedule: function(groupSched){
+        const {currWeek, currentDay} = this.getDateParams();
+        // console.log(groupSched[currWeek]);
+        // console.log(groupSched[currWeek][currentDay]);
+        // console.log(Object.keys(groupSched[currWeek][currentDay]));
+        if (groupSched[currWeek] && groupSched[currWeek][currentDay]) {
+            const currSchedule = {};
+            currSchedule[currWeek] = {};
+            currSchedule[currWeek][currentDay] = groupSched[currWeek][currentDay];
+            return currSchedule;
+        } else {
+            return undefined;
+        }
+    },
     parseSchedule,
     refreshPage,
     dOTW: ['ВОСКРЕСЕНЬЕ', 'ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА']
