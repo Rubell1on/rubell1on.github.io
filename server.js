@@ -1,6 +1,5 @@
 const express = require('express');
 const utils = require('./JS/utils');
-const parser = require('./JS/parser');
 const gOAuth = require('./JS/gOAuth');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
