@@ -93,10 +93,14 @@ module.exports = class yandexApi {
         });
     }
 
-    getDirList(list) {
+    getDirList(list) {        
         const paths = list.body.items;
         return paths.reduce((acc, el) => {
-            const str = el.path.match(/\/\w*-\d{4}\//g);
+            let str;
+            if (arguments.length > 1) {
+                const regexp = new RegExp(arguments[1], 'g');
+                str = el.path.match(regexp);
+            } else str = el.path.match(/\/\w*-\d{4}\//g);
             if (str) {
                 const dirName = str[0].slice(1, -1);
                 if (!acc.includes(dirName)) {

@@ -23,13 +23,15 @@ async function refreshPage() {
 async function parseSchedule() {
     const list = await yandex.getList();
     const dirList = yandex.getDirList(list);
+    const subDirList = yandex.getDirList(list, /(\/pairs\/)|(\/exams\/)/g);
     const halfYear = this.getHalfYear();
     const year = new Date().getFullYear();
     const yearString = `${halfYear}-${year}`;
 
     if (!dirList.includes(yearString)) {
         await yandex.createFolder(yearString);
-
+        if (!subDirList.includes('pairs')) yandex.createFolder(`${yearString}/pairs/`);
+        if (!subDirList.includes('exams')) yandex.createFolder(`${yearString}/exams/`);
         const html = await this.get('https://www.mirea.ru/education/schedule-main/schedule/');
         const $ = cheerio.load(html);
         const parsedHtml = $('#tab-content > li > div > h2, .uk-overflow-auto');
@@ -44,66 +46,126 @@ async function parseSchedule() {
                     if (!obj.hasOwnProperty('pairs')) obj.pairs = [];
                     obj.pairs.push(el);
                 } 
-                // else if (str.match(/сессии/g)) {
-                //     //TODO У бакалавров две отдельные таблицы под экзамены и под зачеты
-                //     if (!obj.hasOwnProperty('exams')) obj['exams'] = {};
-                //     Object.assign(obj['exams'], el);
-                // }
+                else if (str.match(/(экзаменационной)|(экзаменов)/g)) {
+                    //TODO У бакалавров две отдельные таблицы под экзамены и под зачеты
+                    if (!obj.hasOwnProperty('exams')) obj.exams = [];
+                    obj.exams.push(el);
+                }
             }
         });
 
-        const links = obj.pairs.reduce((acc, el) => {
-            const temp = cheerio.load(el)('table > tbody > tr > td > a').map((ind, link) => link.attribs.href);
-            temp.each((ind, el) => acc.push(el));
+        const links = Object.entries(obj).reduce((acc, curr) => {
+            acc[curr[0]] = curr[1].reduce((acc1, el) => {
+                const temp = cheerio.load(el)('table > tbody > tr > td > a').map((ind, link) => link.attribs.href);
+                temp.each((ind, el) => acc1.push(el));
+                
+                return acc1;
+            }, [])
+                .filter(val => val.match(/.xls/g) && !val.match(/\d-kurs-(zaochniki|vecherniki)/g));
             
-            return acc;
-        }, [])
-            .filter(val => val.match(/.xls/g) && !val.match(/\d-kurs-(zaochniki|vecherniki)/g));
-        links.splice(-2, 2);
-        
-        const buffers = links.map(link => this.get(link, null), []);
-        const data = await Promise.all(buffers);
 
-        data.forEach(async (buffer, ind) => {
-            const reverse = links[ind].split("").reverse().join("");
-            const i = reverse.indexOf('/',0);
-            const name = reverse.slice(0, i).split("").reverse().join("");
-            const uploadLink = await yandex.getUploadLink(`/${yearString}/${name}/`);
-            const res = await yandex.putData(uploadLink.body.href, buffer);
-            if (res.res.statusCode === 201) {
-                console.log(`Файл №${ind} ${name} загружен`);
-            } else {
-                console.error(`Во время загрузки файла произошла ошибка: ${JSON.parse(res.body).message}`);
-            } 
-        }); 
+            return acc;
+        }, {});
+        links.pairs.splice(-2, 2);
+
+        const buffers = Object.entries(links).reduce((acc, curr) => {
+            acc[curr[0]] = curr[1].map(link => this.get(link, null), []);
+
+            return acc;
+        }, {});
+        
+        const data = { 
+            pairs: await Promise.all(buffers.pairs), 
+            exams: await Promise.all(buffers.exams) 
+        };
+
+        Object.entries(data).forEach(type => {
+            type[1].forEach(async (buffer, ind) => {
+                const reverse = links[type[0]][ind].split("").reverse().join("");
+                const i = reverse.indexOf('/',0);
+                const name = reverse.slice(0, i).split("").reverse().join("");
+                const uploadLink = await yandex.getUploadLink(`/${yearString}/${type[0]}/${name}/`);
+                const res = await yandex.putData(uploadLink.body.href, buffer);
+                if (res.res.statusCode === 201) {
+                    console.log(`Файл №${ind} ${name} загружен`);
+                } else {
+                    console.error(`Во время загрузки файла произошла ошибка: ${JSON.parse(res.body).message}`);
+                } 
+            });
+        });
     }
 
     const listOfFiles = await yandex.getList();
-    const filteredFiles = listOfFiles.body.items.filter(el => el.path.match(yearString));
-    console.log(`Получено ${filteredFiles.length} файлов`);
-    const buffers = filteredFiles.map(async (el) => {
-        const path = await yandex.getDowndloadLink(el.path);
-        const downloadData = await yandex.getData(path.body.href);
-        return downloadData.body;
-    }, []);
-    const data = await Promise.all(buffers);
-    //
-    return data.reduce((acc, el, ind) => {
-        const schedule = xlsx.parse(el);
-        const groupNames = this.getGroupNames(schedule);
-        const parsedSchedule = this.getSchedules(groupNames, schedule);
-        const temp = Object.entries(parsedSchedule).reduce((acc, group) => {
-            const name = group[0];
-            const schedule = group[1];
+        const filteredFiles = listOfFiles.body.items
+            .filter(el => el.path.match(yearString))
+            .reduce((acc, curr) => {
+                if (/\/pairs/g.test(curr.path)) {
+                    if (!acc.hasOwnProperty('pairs')) acc.pairs = [];
+                    else acc.pairs.push(curr)
+                }
 
-            this.deleteUselessAttrs(schedule, ['num', 'begin', 'end', 'day', 'week']);
-            acc[name] = schedule;
-            
+                if (/\/exams/g.test(curr.path)) {
+                    if (!acc.hasOwnProperty('exams')) acc.exams = [];
+                    else acc.exams.push(curr)
+                }
+
+                return acc;
+            }, {});
+
+    const buffers = Object.entries(filteredFiles)
+        .reduce((acc, curr, ind) => {
+            const type = curr[0];
+            acc[type] = curr[1].map(async el => {
+                const path = await yandex.getDowndloadLink(el.path);
+                const downloadData = await yandex.getData(path.body.href);
+
+                return downloadData.body;
+            }, []);
+
             return acc;
         }, {});
-        console.log(`Закончен парсинг ${ind + 1} объекта`);
-        return Object.assign(acc, temp);
-    }, {});
+
+    const data = {
+        pairs: await Promise.all(buffers.pairs),
+        exams: await Promise.all(buffers.exams)
+    }
+    console.log(`Получено ${filteredFiles.pairs.length} файлов`);
+    
+    return Object.entries(data)
+        .reduce((acc1, elem) => {
+            const type = elem[0];
+            if (type === 'pairs') {
+                acc1[type] = elem[1].reduce((acc2, el, ind) => {
+                    const schedule = xlsx.parse(el);
+                    const groupNames = this.getGroupNames(schedule);
+                    const parsedSchedule = this.getSchedules(groupNames, schedule);
+                    const temp = Object.entries(parsedSchedule).reduce((acc3, group) => {
+                        const name = group[0];
+                        const schedule = group[1];
+            
+                        this.deleteUselessAttrs(schedule, ['num', 'begin', 'end', 'day', 'week']);
+                        acc3[name] = schedule;
+                        
+                        return acc3;
+                    }, {});
+                    console.log(`Закончен парсинг ${ind + 1} расписания занятий`);
+                    return Object.assign(acc2, temp);
+
+                }, {}); 
+            }
+            
+            if (type === 'exams') {
+                acc1[type] = elem[1].reduce((acc2, el, ind) => {
+                    const examSchedule = xlsx.parse(el);
+                    const parsedSchedule = this.getExams(examSchedule);
+
+                    console.log(`Закончен парсинг ${ind + 1} расписания экзаменов`);
+                    return Object.assign(acc2, parsedSchedule);
+                }, {});
+            }
+            
+            return acc1;
+        }, {});
 }
 
 function getEnvironment(env) {
@@ -331,6 +393,76 @@ module.exports = {
         } else {
             return undefined;
         }
+    },
+    getExams: function(parsed) {
+        const groupNames = this.getGroupNames(parsed);
+        let month = '';
+        let day = '';
+
+        const exam = {};
+
+        if (arguments.length > 1) {
+            if (arguments[1] == true) {
+                Object.entries(parsed).forEach(list => {
+                    const row = list[1].data;
+                    for (let i = 2; i < list[1].data.length - 3; i++) {
+                        if (row[i][0]) {
+                            month = row[i][0].replace(/ /g, '');
+                            if (!exam.hasOwnProperty(month)) exam[month] = {};
+                        }
+        
+                        if (row[i][1] && /^\d{1,2}/g.test(row[i][1])) {
+                            day = row[i][1];
+        
+                            Object.entries(groupNames).forEach((value, ind) => {
+                                group = value[1];
+                                if (row[i][group.ind]) {
+                                    if(!exam[month].hasOwnProperty(day)) exam[month][day] = {};
+                                    if (!exam[month][day].hasOwnProperty(group.name)) exam[month][day][group.name] = {};
+                                    exam[month][day][group.name] = {
+                                        type: row[i][group.ind],
+                                        name: row[i + 1][group.ind],
+                                        teacher: row[i + 2][group.ind],
+                                        startTime: row[i][group.ind + 1],
+                                        classRoom: row[i][group.ind + 2],
+                                    };
+                                } 
+                            });
+                        }
+                    }
+                });
+            }
+        } else {
+            Object.entries(parsed).forEach(list => {
+                const rows = list[1].data;
+    
+                for (let i = 2; i < rows.length - 3; i++) {
+                    if (rows[i][0]) month = rows[i][0].replace(/ /g, '');
+                    if (rows[i][1] && /^\d{1,2}/g.test(rows[i][1])) {
+                        day = rows[i][1];
+    
+                        Object.entries(groupNames).forEach(el => {
+                            const group = el[1];
+                            const name = group.name;
+                            if (rows[i + 1][group.ind]) {
+                                if (!exam.hasOwnProperty(name)) exam[name] = {};
+                                if (!exam[name].hasOwnProperty(month)) exam[name][month] = {};
+                                if (!exam[name][month].hasOwnProperty(day)) exam[name][month][day] = 
+                                {
+                                    type: rows[i][group.ind],
+                                    name: rows[i + 1][group.ind],
+                                    teacher: rows[i + 2][group.ind],
+                                    startTime: rows[i][group.ind + 1],
+                                    classRoom: rows[i][group.ind + 2],
+                                };
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        return exam;
     },
     parseSchedule,
     refreshPage,

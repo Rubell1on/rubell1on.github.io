@@ -1,5 +1,6 @@
 const express = require('express');
 const utils = require('./JS/utils');
+const parser = require('./JS/parser');
 const gOAuth = require('./JS/gOAuth');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
@@ -40,9 +41,9 @@ app.get('/', (req, res) => {
 app.get('/schedule', (req, res) => {
     const groupName = req.query.group.toUpperCase();
     const current = req.query.current;
-    if (schedules.hasOwnProperty(groupName)) {
+    if (schedules.pairs.hasOwnProperty(groupName)) {
         const {currStudyWeekNum} = utils.getDateParams();
-        const filteredSchedule = utils.filterPairsByWeek(schedules[groupName], currStudyWeekNum);
+        const filteredSchedule = utils.filterPairsByWeek(schedules.pairs[groupName], currStudyWeekNum);
         if (current) {
             const currSchedule = utils.getCurrentSchedule(filteredSchedule);
             res.render('index.ejs', {schedule: currSchedule, groupName});
@@ -50,16 +51,22 @@ app.get('/schedule', (req, res) => {
     } else res.send(`Расписание группы ${groupName} не найдено!`);
 });
 
-app.get('/api', (req, res) => {
+app.get('/exam', (req, res) => {
+    const groupName = req.query.group.toUpperCase();
+    if (schedules.exams.hasOwnProperty(groupName)) res.json(schedules.exams[groupName]);
+    else res.send(`Расписание экзаменов по группе ${groupName} не найдено!`);
+});
+
+app.get('/api/schedule', (req, res) => {
     const query = req.query;
     const queryKeys = Object.keys(query);
     const {currStudyWeekNum} = utils.getDateParams();
-    if (!queryKeys.length) res.json(schedules);
+    if (!queryKeys.length) res.json(schedules.pairs);
     else {
         if (query.hasOwnProperty('group')) {
             const groupName = query.group.toUpperCase();
-            if (schedules.hasOwnProperty(groupName)) {
-                let groupSched = schedules[groupName];
+            if (schedules.pairs.hasOwnProperty(groupName)) {
+                let groupSched = schedules.pairs[groupName];
                 if (query.filtered) groupSched = utils.filterPairsByWeek(groupSched, currStudyWeekNum);
                 if (query.hasOwnProperty('current')) {
                     currSchedule = utils.getCurrentSchedule(groupSched);
@@ -74,7 +81,7 @@ app.get('/api', (req, res) => {
             let teacher = JSON.parse(query.teacher);
             if (typeof teacher === 'string') teacher = [teacher];
             
-            let schedule = utils.getDataByField(schedules, 'teacher', teacher);
+            let schedule = utils.getDataByField(schedules.pairs, 'teacher', teacher);
 
             if (query.current) {
                 schedule = Object.entries(schedule).reduce((acc, group) => {
@@ -87,6 +94,17 @@ app.get('/api', (req, res) => {
             if (utils.isEmpty(schedule)) res.status(404).send(`Преподаватель(ли) ${teacher.join(', ')} не найден(ы)`);
             else res.json(schedule);   
         }
+    }
+});
+
+app.get('/api/exams', (req, res) => {
+    const query = req.query;
+    const queryKeys = Object.keys(query);
+    if (!queryKeys.length) res.json(schedules.exams);
+    else {
+        const groupName = query.group.toUpperCase();
+        if (schedules.exams.hasOwnProperty(groupName)) res.json({exams: schedules.exams[groupName], groupName});
+        else res.status(404).send(`Расписание экзаменов группы ${groupName} не найдено!`);
     }
 });
 
