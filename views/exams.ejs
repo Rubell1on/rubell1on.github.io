@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no">
+    <title><%= groupName%> - расписание</title>
+    <link rel="stylesheet" href="./public/CSS/style.css">
+    <link rel="stylesheet" href="./public/CSS/popup.css">
+</head>
+<body>
+    <% include blocks/toolbar%>
+    <div class="wrapper">
+        <table class="tbl">
+            <% for (month in exams) {%>
+                <tr>
+                    <td><%=month%></td>
+                    <% for (day in exams[month]) {%>
+                        <tr class="row" id="day-<%= day%>">
+                            <td><%=day%></td>
+                            <td><%= exams[month][day].dayOfTheWeek%></td>
+                            <td><%= exams[month][day].startTime%></td>
+                            <td><%= exams[month][day].name%></td>
+                            <td class="pair-type"><%= exams[month][day].type%></td>
+                            <td class="teacher-name"><%= exams[month][day].teacher%></td>
+                            <td class="class-room"><%= exams[month][day].classRoom%></td>
+                        </tr>
+                    <% }%>    
+                </tr>
+            <% }%>
+        </table>
+    </div>
+    <script src="JS/jquery.js"></script>
+    <script src="JS/tables.js"></script>
+    <script src="JS/popup.js"></script>
+</body>
+</html>

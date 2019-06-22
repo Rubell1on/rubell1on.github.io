@@ -210,8 +210,16 @@ input[type=submit]:hover {
     transition-duration: 200ms;
     transition-timing-function: ease;
     cursor: pointer;
-    background: white;
+    background: #7787e4;
     border-radius: 5px;
+    color: white;
+}
+
+.left-menu > ul > .placeholder {
+    line-height: 0;
+    height: 3px;
+    background: #8597fd;
+    cursor: default;
 }
 
 .left-menu > ul > li:hover {

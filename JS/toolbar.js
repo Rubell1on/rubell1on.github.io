@@ -45,7 +45,8 @@ group.click(() => {
                 `<li>Расписание ${groupName}</li>` +
                 `<li class="current-schedule">Текущее</li>` +
                 '<li class="week-schedule">На неделю</li>' + 
-                '<li class=""></li>' + 
+                '<li class="exams-schedule">Экзамены</li>' + 
+                '<li class="placeholder"></li>' + 
                 '<li class="settings">Настройки</li>' + 
             '</ul>' +
         '</div>';
@@ -127,6 +128,8 @@ group.click(() => {
         $('.week-schedule').click(() => location.href = window.location.origin + `/schedule?group=${groupName}`);
 
         $('.current-schedule').click(() => location.href = window.location.origin + `/schedule?group=${groupName}&current=true`);
+
+        $('.exams-schedule').click(() => location.href = window.location.origin + `/exams?group=${groupName}`);
 
         background = $('.left-menu-background');
         menu = $('.left-menu');

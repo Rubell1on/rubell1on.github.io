@@ -50,9 +50,9 @@ app.get('/schedule', (req, res) => {
     } else res.send(`Расписание группы ${groupName} не найдено!`);
 });
 
-app.get('/exam', (req, res) => {
+app.get('/exams', (req, res) => {
     const groupName = req.query.group.toUpperCase();
-    if (schedules.exams.hasOwnProperty(groupName)) res.json(schedules.exams[groupName]);
+    if (schedules.exams.hasOwnProperty(groupName)) res.render('exams.ejs', {exams: schedules.exams[groupName], groupName});
     else res.send(`Расписание экзаменов по группе ${groupName} не найдено!`);
 });
 

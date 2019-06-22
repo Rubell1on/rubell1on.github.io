@@ -396,8 +396,9 @@ module.exports = {
     },
     getExams: function(parsed) {
         const groupNames = this.getGroupNames(parsed);
-        let month = '';
-        let day = '';
+        let month;
+        let day;
+        let dayOfTheWeek;
 
         const exam = {};
 
@@ -437,9 +438,22 @@ module.exports = {
                 const rows = list[1].data;
     
                 for (let i = 2; i < rows.length - 3; i++) {
-                    if (rows[i][0]) month = rows[i][0].replace(/ /g, '');
+                    
+                    if (rows[i][0]) {
+                        const temp = rows[i][0].replace(/ /g, '');
+                        month = this.firstLetterToUpperCase(temp);
+                    }
                     if (rows[i][1] && /^\d{1,2}/g.test(rows[i][1])) {
-                        day = rows[i][1];
+                        if (typeof rows[i][1] === 'string') {
+                            const tempDay = rows[i][1].match(/\d{1,}/g);
+                            const tempDOTW = rows[i][1].match(/[а-яё]{2,}/g);
+
+                            day = tempDay ? tempDay[0] : '';
+                            dayOfTheWeek = tempDOTW ? tempDOTW[0] : '';
+                        } else {
+                            day = rows[i][1];
+                            dayOfTheWeek = '';
+                        }
     
                         Object.entries(groupNames).forEach(el => {
                             const group = el[1];
@@ -449,6 +463,7 @@ module.exports = {
                                 if (!exam[name].hasOwnProperty(month)) exam[name][month] = {};
                                 if (!exam[name][month].hasOwnProperty(day)) exam[name][month][day] = 
                                 {
+                                    dayOfTheWeek,
                                     type: rows[i][group.ind],
                                     name: rows[i + 1][group.ind],
                                     teacher: rows[i + 2][group.ind],
@@ -463,6 +478,11 @@ module.exports = {
         }
 
         return exam;
+    },
+    firstLetterToUpperCase: function(str) {
+        let temp = str.split('');
+        temp[0] = temp[0].toUpperCase();
+        return temp.join('');
     },
     parseSchedule,
     refreshPage,
