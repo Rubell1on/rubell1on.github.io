@@ -117,11 +117,11 @@ app.get('/api/export', (req, res) => {
                         };
 
                         const rowInd = exporter.getRowIndex(template, params);
-
+                        template[0][1] = teacher[0];
                         template[rowInd][5] = group[0];
                         template[rowInd][6] = pair[1].name;
                         template[rowInd][7] = pair[1].type;
-                        template[rowInd][8] = pair[1].classRoom;
+                        template[rowInd][8] = pair[1].room;
 
                     });
                 });
