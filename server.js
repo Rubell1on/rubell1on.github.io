@@ -1,6 +1,7 @@
 const express = require('express');
 const utils = require('./JS/utils');
 const gOAuth = require('./JS/gOAuth');
+const exporter = require('./JS/exporter');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
 
@@ -17,7 +18,7 @@ app = express();
 utils.parseSchedule()
     .then((data) => {
         schedules = data;
-        app.listen(PORT, () => {
+        app.listen(PORT, '192.168.0.102', () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
             setInterval(() => {
                 utils.refreshPage().catch(e => console.log(e));
@@ -93,6 +94,43 @@ app.get('/api/schedule', (req, res) => {
             if (utils.isEmpty(schedule)) res.status(404).send(`Преподаватель(ли) ${teacher.join(', ')} не найден(ы)`);
             else res.json(schedule);   
         }
+    }
+});
+
+app.get('/api/export', (req, res) => {
+    const query = req.query;
+    if (query.hasOwnProperty('teacher')) {
+        let teacher = JSON.parse(query.teacher);
+        if (typeof teacher === 'string') teacher = [teacher];
+        let schedule = utils.getDataByField(schedules.pairs, 'teacher', teacher);
+        
+        const template = exporter.createTeacherScheduleTemplate();
+
+        Object.entries(schedule).forEach(group => {
+            Object.entries(group[1]).forEach(week => {
+                Object.entries(week[1]).forEach(dOTW => {
+                    Object.entries(dOTW[1]).forEach(pair => {
+                        const params = {
+                            dOTW: dOTW[0],
+                            pairNum: Number(pair[0]),
+                            weekNum: Number(week[0])
+                        };
+
+                        const rowInd = exporter.getRowIndex(template, params);
+
+                        template[rowInd][5] = group[0];
+                        template[rowInd][6] = pair[1].name;
+                        template[rowInd][7] = pair[1].type;
+                        template[rowInd][8] = pair[1].classRoom;
+
+                    });
+                });
+            });
+        });
+
+        const buffer = exporter.createXlsxFile(template);
+
+        res.send(buffer);
     }
 });
 
