@@ -18,7 +18,7 @@ app = express();
 utils.parseSchedule()
     .then((data) => {
         schedules = data;
-        app.listen(PORT, () => {
+        app.listen(PORT, '192.168.0.102', () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
             setInterval(() => {
                 utils.refreshPage().catch(e => console.log(e));
@@ -130,7 +130,8 @@ app.get('/api/export', (req, res) => {
 
         const buffer = exporter.createXlsxFile(template);
 
-        res.send(buffer);
+        res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.status(201).send(buffer);
     }
 });
 
