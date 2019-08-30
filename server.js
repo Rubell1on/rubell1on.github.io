@@ -18,7 +18,7 @@ app = express();
 utils.parseSchedule()
     .then((data) => {
         schedules = data;
-        app.listen(PORT, '192.168.0.106', () => {
+        app.listen(PORT, () => {
             console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
             setInterval(() => {
                 utils.refreshPage().catch(e => console.log(e));
