@@ -41,11 +41,11 @@ module.exports = {
             return acc;
         }, [
             ['Преподаватель'],
-            ['День недели', '№ пары', 'Нач. занятий', 'Оконч. занятий', 'Неделя', 'Группа', 'Предмет', 'Вид занятий', '№ аудитории']
+            ['День недели', '№ пары', 'Нач. занятий', 'Оконч. занятий', 'Неделя']
         ]);
     },
 
-    createMergeOptions: function() {
+    createMergeOptions: function(teachers) {
         const merges = [];
     
         for (let day = 0, i = 2; day < 6; day++, i+=12) {
@@ -62,8 +62,13 @@ module.exports = {
             
             merges.push(...temp);
         }
+
+        for (let i = 0, t = 5; i < teachers.length; i++, t+=4) {
+            merges.push({s: {c: t, r: 0}, e: {c: t + 3, r: 0}});
+        }
+        
     
-        return merges;
+        return {'!merges': merges};
     },
 
     getRowIndex: function (template, params) {
@@ -77,10 +82,7 @@ module.exports = {
             }
         });
     },
-    createXlsxFile: function (template) {
-        const merges = this.createMergeOptions();
-        const options = {'!merges': merges};
-        
+    createXlsxFile: function (template, options) {
         return xlsx.build([{name: "Расписание", data: template}], options);
     }
 };
