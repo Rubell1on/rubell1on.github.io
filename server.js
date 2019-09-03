@@ -1,6 +1,7 @@
 const express = require('express');
 const utils = require('./JS/utils');
 const gOAuth = require('./JS/gOAuth');
+const exporter = require('./JS/exporter');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
 
@@ -93,6 +94,58 @@ app.get('/api/schedule', (req, res) => {
             if (utils.isEmpty(schedule)) res.status(404).send(`Преподаватель(ли) ${teacher.join(', ')} не найден(ы)`);
             else res.json(schedule);   
         }
+    }
+});
+
+app.get('/api/export', (req, res) => {
+    const query = req.query;
+
+    if (query.hasOwnProperty('teacher')) {
+        let teacher = query.teacher.split(',');
+
+        if (typeof teacher === 'string') teacher = [teacher]; 
+
+        const template = exporter.createTeacherScheduleTemplate();
+        const parsedSchedules = teacher.reduce((acc, teach, ind) => {
+            acc[ind] = utils.getDataByField(schedules.pairs, 'teacher', [teach]);
+
+            return acc;
+        }, []);
+
+        for (let i = 0, pos = 5; i < parsedSchedules.length; i++, pos+=4) {
+            Object.entries(parsedSchedules[i]).forEach(group => {
+                Object.entries(group[1]).forEach(week => {
+                    Object.entries(week[1]).forEach(dOTW => {
+                        Object.entries(dOTW[1]).forEach(pair => {
+                            const params = {
+                                dOTW: dOTW[0],
+                                pairNum: Number(pair[0]),
+                                weekNum: Number(week[0])
+                            };
+            
+                            const rowInd = exporter.getRowIndex(template, params);
+                            template[0][pos] = teacher[i];
+
+                            ['Группа', 'Предмет', 'Вид занятий', '№ аудитории'].forEach((e, i) => {
+                                template[1][pos + i] = e;
+                            });
+                            
+                            template[rowInd][pos] = group[0];
+                            template[rowInd][pos + 1] = pair[1].name;
+                            template[rowInd][pos + 2] = pair[1].type;
+                            template[rowInd][pos + 3] = pair[1].room;
+            
+                        });
+                    });
+                });
+            });
+        }
+
+        const options = exporter.createMergeOptions(teacher);
+        const buffer = exporter.createXlsxFile(template, options);
+
+        res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.status(201).send(buffer);
     }
 });
 
