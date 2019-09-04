@@ -20,152 +20,15 @@ async function refreshPage() {
     console.log(`Обновлено ${date.y}-${date.m}-${date.d} ${date.h}:${date.M}:${date.s}`);
 }
 
-async function parseSchedule() {
+async function parseSchedule(yearString) {
     const list = await yandex.getList();
     const dirList = yandex.getDirList(list);
-    const subDirList = yandex.getDirList(list, /(\/pairs\/)|(\/exams\/)/g);
-    const halfYear = this.getHalfYear();
-    const year = new Date().getFullYear();
-    const yearString = `${halfYear}-${year}`;
 
     if (!dirList.includes(yearString)) {
-        await yandex.createFolder(yearString);
-        if (!subDirList.includes('pairs')) yandex.createFolder(`${yearString}/pairs/`);
-        if (!subDirList.includes('exams')) yandex.createFolder(`${yearString}/exams/`);
-        const html = await this.get('https://www.mirea.ru/education/schedule-main/schedule/');
-        const $ = cheerio.load(html);
-        const parsedHtml = $('#tab-content > li > div > h2, .uk-overflow-auto');
-
-        let str;
-        const obj = {};
-        parsedHtml.each((ind, el) => {
-            if (el.tagName === 'h2') {
-                str = cheerio.load(el).text();
-            } else {
-                if (str.match(/занятий/g)) {
-                    if (!obj.hasOwnProperty('pairs')) obj.pairs = [];
-                    obj.pairs.push(el);
-                } 
-                else if (str.match(/(экзаменационной)|(экзаменов)/g)) {
-                    //TODO У бакалавров две отдельные таблицы под экзамены и под зачеты
-                    if (!obj.hasOwnProperty('exams')) obj.exams = [];
-                    obj.exams.push(el);
-                }
-            }
-        });
-
-        const links = Object.entries(obj).reduce((acc, curr) => {
-            acc[curr[0]] = curr[1].reduce((acc1, el) => {
-                const temp = cheerio.load(el)('table > tbody > tr > td > a').map((ind, link) => link.attribs.href);
-                temp.each((ind, el) => acc1.push(el));
-                
-                return acc1;
-            }, [])
-                .filter(val => val.match(/.xls/g) && !val.match(/\d-kurs-(zaochniki|vecherniki)/g));
-            
-
-            return acc;
-        }, {});
-        links.pairs.splice(-2, 2);
-
-        const buffers = Object.entries(links).reduce((acc, curr) => {
-            acc[curr[0]] = curr[1].map(link => this.get(link, null), []);
-
-            return acc;
-        }, {});
-        
-        const data = { 
-            pairs: await Promise.all(buffers.pairs), 
-            exams: await Promise.all(buffers.exams) 
-        };
-
-        Object.entries(data).forEach(type => {
-            type[1].forEach(async (buffer, ind) => {
-                const reverse = links[type[0]][ind].split("").reverse().join("");
-                const i = reverse.indexOf('/',0);
-                const name = reverse.slice(0, i).split("").reverse().join("");
-                const uploadLink = await yandex.getUploadLink(`/${yearString}/${type[0]}/${name}/`);
-                const res = await yandex.putData(uploadLink.body.href, buffer);
-                if (res.res.statusCode === 201) {
-                    console.log(`Файл №${ind} ${name} загружен`);
-                } else {
-                    console.error(`Во время загрузки файла произошла ошибка: ${JSON.parse(res.body).message}`);
-                } 
-            });
-        });
+        saveScheduleFiles(yearString);
     }
 
-    const listOfFiles = await yandex.getList();
-        const filteredFiles = listOfFiles.body.items
-            .filter(el => el.path.match(yearString))
-            .reduce((acc, curr) => {
-                if (/\/pairs/g.test(curr.path)) {
-                    if (!acc.hasOwnProperty('pairs')) acc.pairs = [];
-                    else acc.pairs.push(curr)
-                }
-
-                if (/\/exams/g.test(curr.path)) {
-                    if (!acc.hasOwnProperty('exams')) acc.exams = [];
-                    else acc.exams.push(curr)
-                }
-
-                return acc;
-            }, {});
-
-    const buffers = Object.entries(filteredFiles)
-        .reduce((acc, curr, ind) => {
-            const type = curr[0];
-            acc[type] = curr[1].map(async el => {
-                const path = await yandex.getDowndloadLink(el.path);
-                const downloadData = await yandex.getData(path.body.href);
-
-                return downloadData.body;
-            }, []);
-
-            return acc;
-        }, {});
-
-    const data = {
-        pairs: await Promise.all(buffers.pairs),
-        exams: await Promise.all(buffers.exams)
-    }
-    console.log(`Получено ${filteredFiles.pairs.length} файлов`);
-    
-    return Object.entries(data)
-        .reduce((acc1, elem) => {
-            const type = elem[0];
-            if (type === 'pairs') {
-                acc1[type] = elem[1].reduce((acc2, el, ind) => {
-                    const schedule = xlsx.parse(el);
-                    const groupNames = this.getGroupNames(schedule);
-                    const parsedSchedule = this.getSchedules(groupNames, schedule);
-                    const temp = Object.entries(parsedSchedule).reduce((acc3, group) => {
-                        const name = group[0];
-                        const schedule = group[1];
-            
-                        this.deleteUselessAttrs(schedule, ['num', 'begin', 'end', 'day', 'week']);
-                        acc3[name] = schedule;
-                        
-                        return acc3;
-                    }, {});
-                    console.log(`Закончен парсинг ${ind + 1} расписания занятий`);
-                    return Object.assign(acc2, temp);
-
-                }, {}); 
-            }
-            
-            if (type === 'exams') {
-                acc1[type] = elem[1].reduce((acc2, el, ind) => {
-                    const examSchedule = xlsx.parse(el);
-                    const parsedSchedule = this.getExams(examSchedule);
-
-                    console.log(`Закончен парсинг ${ind + 1} расписания экзаменов`);
-                    return Object.assign(acc2, parsedSchedule);
-                }, {});
-            }
-            
-            return acc1;
-        }, {});
+    return getScheduleFiles(yearString);
 }
 
 function getEnvironment(env) {
@@ -193,6 +56,149 @@ function getEnvironment(env) {
     const yandex_token = env.yandex_token;
 
     return {creds, token, SPREADSHEET_ID, yandex_token};
+}
+
+async function getScheduleFiles(yearString) {
+    const listOfFiles = await yandex.getList();
+    const filteredFiles = listOfFiles.body.items
+        .filter(el => el.path.match(yearString))
+        .reduce((acc, curr) => {
+            if (/\/pairs/g.test(curr.path)) {
+                if (!acc.hasOwnProperty('pairs')) acc.pairs = [];
+                else acc.pairs.push(curr);
+            }
+
+            if (/\/exams/g.test(curr.path)) {
+                if (!acc.hasOwnProperty('exams')) acc.exams = [];
+                else acc.exams.push(curr);
+            }
+
+            return acc;
+        }, {});
+
+const buffers = Object.entries(filteredFiles)
+    .reduce((acc, curr, ind) => {
+        const type = curr[0];
+        acc[type] = curr[1].map(async el => {
+            const path = await yandex.getDowndloadLink(el.path);
+            const downloadData = await yandex.getData(path.body.href);
+
+            return downloadData.body;
+        }, []);
+
+        return acc;
+    }, {});
+
+const data = {
+    pairs: buffers.pairs ? await Promise.all(buffers.pairs): [],
+    exams: buffers.exams ? await Promise.all(buffers.exams): []
+}
+console.log(`Получено ${filteredFiles.pairs.length} файлов`);
+
+return Object.entries(data)
+    .reduce((acc1, elem) => {
+        const type = elem[0];
+        if (type === 'pairs') {
+            acc1[type] = elem[1].reduce((acc2, el, ind) => {
+                const schedule = xlsx.parse(el);
+                const groupNames = module.exports.getGroupNames(schedule);
+                const parsedSchedule = module.exports.getSchedules(groupNames, schedule);
+                const temp = Object.entries(parsedSchedule).reduce((acc3, group) => {
+                    const name = group[0];
+                    const schedule = group[1];
+        
+                    module.exports.deleteUselessAttrs(schedule, ['num', 'begin', 'end', 'day', 'week']);
+                    acc3[name] = schedule;
+                    
+                    return acc3;
+                }, {});
+                console.log(`Закончен парсинг ${ind + 1} расписания занятий`);
+                return Object.assign(acc2, temp);
+
+            }, {}); 
+        }
+        
+        if (type === 'exams') {
+            acc1[type] = elem[1].reduce((acc2, el, ind) => {
+                const examSchedule = xlsx.parse(el);
+                const parsedSchedule = module.exports.getExams(examSchedule);
+
+                console.log(`Закончен парсинг ${ind + 1} расписания экзаменов`);
+                return Object.assign(acc2, parsedSchedule);
+            }, {});
+        }
+        
+        return acc1;
+    }, {});
+}
+
+async function saveScheduleFiles(yearString) {
+    const list = await yandex.getList();
+    const subDirList = yandex.getDirList(list, `(/${yearString}/pairs/)|(/${yearString}/exams/)`);
+    await yandex.createFolder(yearString);
+    if (!subDirList.includes('pairs')) await yandex.createFolder(`${yearString}/pairs/`);
+    if (!subDirList.includes('exams')) await yandex.createFolder(`${yearString}/exams/`);
+    const html = await this.get('https://www.mirea.ru/education/schedule-main/schedule/');
+    const $ = cheerio.load(html);
+    const parsedHtml = $('#tab-content > li > div > h2, .uk-overflow-auto');
+
+    let str;
+    const obj = {};
+    parsedHtml.each((ind, el) => {
+        if (el.tagName === 'h2') {
+            str = cheerio.load(el).text();
+        } else {
+            if (str.match(/занятий/g)) {
+                if (!obj.hasOwnProperty('pairs')) obj.pairs = [];
+                obj.pairs.push(el);
+            } 
+            else if (str.match(/(экзаменационной)|(экзаменов)/g)) {
+                //TODO У бакалавров две отдельные таблицы под экзамены и под зачеты
+                if (!obj.hasOwnProperty('exams')) obj.exams = [];
+                obj.exams.push(el);
+            }
+        }
+    });
+
+    const links = Object.entries(obj).reduce((acc, curr) => {
+        acc[curr[0]] = curr[1].reduce((acc1, el) => {
+            const temp = cheerio.load(el)('table > tbody > tr > td > a').map((ind, link) => link.attribs.href);
+            temp.each((ind, el) => acc1.push(el));
+            
+            return acc1;
+        }, [])
+            .filter(val => val.match(/.xls/g) && !val.match(/\d-kurs-(zaochniki|vecherniki)/g));
+        
+
+        return acc;
+    }, {});
+    links.pairs.splice(-2, 2);
+
+    const buffers = Object.entries(links).reduce((acc, curr) => {
+        acc[curr[0]] = curr[1].map(link => module.exports.get(link, null), []);
+
+        return acc;
+    }, {});
+    
+    const data = { 
+        pairs: await Promise.all(buffers.pairs), 
+        exams: await Promise.all(buffers.exams) 
+    };
+
+    Object.entries(data).forEach(type => {
+        type[1].forEach(async (buffer, ind) => {
+            const reverse = links[type[0]][ind].split("").reverse().join("");
+            const i = reverse.indexOf('/',0);
+            const name = reverse.slice(0, i).split("").reverse().join("");
+            const uploadLink = await yandex.getUploadLink(`/${yearString}/${type[0]}/${name}/`);
+            const res = await yandex.putData(uploadLink.body.href, buffer);
+            if (res.res.statusCode === 201) {
+                console.log(`Файл №${ind} ${name} загружен`);
+            } else {
+                console.error(`Во время загрузки файла произошла ошибка: ${JSON.parse(res.body).message}`);
+            } 
+        });
+    });
 }
 
 
@@ -248,14 +254,17 @@ module.exports = {
                 }
 
                 if (curr[index] && ind > 2) {
-                    acc[enumer[acc.week]][acc.day][acc.num] = {
-                        begin: acc.begin,
-                        end: acc.end,
-                        name: curr[index],
-                        type: curr[index + 1],
-                        teacher: curr[index + 2],
-                        room: curr[index + 3]
-                    };
+                    if (acc.week && acc.day && acc.num) {
+                        acc[enumer[acc.week]][acc.day][acc.num] = {
+                            begin: acc.begin,
+                            end: acc.end,
+                            name: curr[index],
+                            type: curr[index + 1],
+                            teacher: curr[index + 2],
+                            room: curr[index + 3]
+                        };
+                    }
+                    
                 }
                 return acc;
                 
@@ -301,7 +310,7 @@ module.exports = {
     },
     getHalfYear: function () {
         const month = new Date().getMonth();
-        const springMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        const springMonth = [0, 1, 2, 3, 4, 5, 6, 7];
         return springMonth.includes(month) ? 'spring': 'autumn'; 
     },
     getCurrWeek: function () {
@@ -479,6 +488,11 @@ module.exports = {
 
         return exam;
     },
+    createYearString: function() {
+        const halfYear = this.getHalfYear();
+        const year = new Date().getFullYear();
+        return `${halfYear}-${year}`;
+    },
     firstLetterToUpperCase: function(str) {
         let temp = str.split('');
         temp[0] = temp[0].toUpperCase();
@@ -486,5 +500,7 @@ module.exports = {
     },
     parseSchedule,
     refreshPage,
+    getScheduleFiles,
+    saveScheduleFiles,
     dOTW: ['ВОСКРЕСЕНЬЕ', 'ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА']
 };
