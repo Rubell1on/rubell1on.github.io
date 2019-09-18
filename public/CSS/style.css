@@ -14,7 +14,7 @@
     padding-top: 10px;
     position: relative;
     margin: 0 auto;
-    width: fit-content;
+    width: max-content;
 }
 
 .tbl {
