@@ -63,7 +63,7 @@
 }
 
 .name {
-    width: fit-content;
+    width: max-content;
     margin: 0 auto;
     font-size: 30px;
     margin-bottom: 10px;
