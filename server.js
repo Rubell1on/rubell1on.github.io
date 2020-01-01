@@ -9,23 +9,31 @@ const {creds, token, SPREADSHEET_ID} = utils.getEnvironment(process.env);
 
 const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.client_secret, creds.web.redirect_uris);
 oAuth2Client.setCredentials(token);
+const idle = Boolean(process.argv[2]);
 
 const PORT = process.env.PORT || 3000;
 let schedules = {};
+let yearString = utils.createYearString();
 
 app = express();
 
-utils.parseSchedule()
-    .then((data) => {
-        schedules = data;
-        app.listen(PORT, () => {
-            console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-            setInterval(() => {
-                utils.refreshPage().catch(e => console.log(e));
-            }, 300000);
-        });
-    })
-    .catch(err => console.error(err));
+if (idle) {
+    app.listen(PORT, '192.168.1.157', () => {
+        console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+    });
+} else {
+    utils.parseSchedule()
+        .then((data) => {
+            schedules = data;
+            app.listen(PORT, () => {
+                console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+                setInterval(() => {
+                    utils.refreshPage().catch(e => console.log(e));
+                }, 300000);
+            });
+        })
+        .catch(err => console.error(err));
+}
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
@@ -171,10 +179,39 @@ app.route('/feedback')
     })
     .post((req, res) => postFeedback(req, res).catch(err => console.log(err)));
 
-app.get('/update', (req, res) => {
-    res.write('Обновление расписаний началось');
-    res.end('200');
+app.get('/update', async (req, res) => {
+    const query = req.query;
+    const queryKeys = Object.keys(query);
+    const field = 'yearString';
+
+    if (queryKeys.includes(field)) {
+        utils.saveScheduleFiles(query.yearString)
+            .then(() => res.status(201).send('Обновление расписаний завершено!'))
+            .catch(err => {
+                res.status(500).send(err.stack)
+            });
+        
+    } else {
+        res.status(400).send(`Не найдено поле ${field}`);
+    }
 });
+
+app.get('/changeSeason', (req, res) => {
+    const query = req.query;
+    const queryKeys = Object.keys(query);
+    const field = 'yearString';
+
+    if (queryKeys.includes(field)) {
+        utils.getScheduleFiles(query.yearString)
+            .then(data => {
+                schedules = data;
+                res.status(202).send('Полугодие изменено');
+            })
+            .catch(err => res.status(500).send(err));
+    } else {
+        res.status(400).send(`Не найдено поле ${field}`);
+    }
+})
 
 app.get('/test', (req, res) => {
     const render = req.query.render;
