@@ -168,6 +168,8 @@ app.get('/api/exams', (req, res) => {
     }
 });
 
+app.get('/api', (req, res) => res.render('api.ejs'));
+
 app.route('/feedback')
     .get(async (req, res) => {
         const feedback = await gOAuth.getSpreadSheet(oAuth2Client, SPREADSHEET_ID).catch(err => console.log(err));
