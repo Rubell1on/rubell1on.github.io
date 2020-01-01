@@ -9,6 +9,7 @@ const {creds, token, SPREADSHEET_ID} = utils.getEnvironment(process.env);
 
 const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.client_secret, creds.web.redirect_uris);
 oAuth2Client.setCredentials(token);
+const idle = Boolean(process.argv[2]);
 
 const PORT = process.env.PORT || 3000;
 let schedules = {};
@@ -16,17 +17,23 @@ let yearString = utils.createYearString();
 
 app = express();
 
-utils.parseSchedule(yearString)
-    .then((data) => {
-        schedules = data;
-        app.listen(PORT, () => {
-            console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-            setInterval(() => {
-                utils.refreshPage().catch(e => console.log(e));
-            }, 300000);
-        });
-    })
-    .catch(err => console.error(err));
+if (idle) {
+    app.listen(PORT, '192.168.1.157', () => {
+        console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+    });
+} else {
+    utils.parseSchedule()
+        .then((data) => {
+            schedules = data;
+            app.listen(PORT, () => {
+                console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+                setInterval(() => {
+                    utils.refreshPage().catch(e => console.log(e));
+                }, 300000);
+            });
+        })
+        .catch(err => console.error(err));
+}
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
