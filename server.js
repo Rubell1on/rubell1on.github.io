@@ -17,23 +17,22 @@ let yearString = utils.createYearString();
 
 app = express();
 
-if (idle) {
-    app.listen(PORT, '192.168.1.157', () => {
-        console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-    });
-} else {
-    utils.parseSchedule()
+app.listen(PORT, () => {
+    console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
+    if (!idle) {
+        console.log("Произвожу парсинг расписаний");
+
+        utils.parseSchedule()
         .then((data) => {
             schedules = data;
-            app.listen(PORT, () => {
-                console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
-                setInterval(() => {
-                    utils.refreshPage().catch(e => console.log(e));
-                }, 300000);
-            });
+            console.log("Парсинг завершен");
+            setInterval(() => {
+                utils.refreshPage().catch(e => console.log(e));
+            }, 300000);
         })
         .catch(err => console.error(err));
-}
+    } 
+});
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));

@@ -1,12 +1,13 @@
 const halfYear = getHalfYear();
 let subtrahend;
 if (halfYear === 'spring') {
-    subtrahend = 6;
+    subtrahend = 5;
 } else if (halfYear === 'autumn') {
-    subtrahend = 34;
+    subtrahend = 33;
 }
+const weeksDiff = getCurrWeek() - subtrahend;
+const currWeekNum = weeksDiff <= 0? 0 : weeksDiff;
 
-const currWeekNum = getCurrWeek() - subtrahend;
 $('.toolbar-week-number').text(`#${currWeekNum}`);
 
 if (localStorage.getItem('hideDonations') === 'true') $('.donations').css('display', 'none');
