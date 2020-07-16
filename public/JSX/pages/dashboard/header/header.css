@@ -37,3 +37,8 @@
 .header__element:hover {
     background: #8597FD;
 }
+
+.donation__icon {
+    padding: 4px 0 4px 0;
+    height: 100%;
+}

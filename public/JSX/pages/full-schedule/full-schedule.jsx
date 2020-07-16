@@ -30,11 +30,11 @@ export default function FullSchedule(props) {
                     return <div className="class" key={classId}>
                         <div className="class__row">
                             <div className="class__id">{classId}</div>
-                            <div className="class__time">{`${classData.begin}-${classData.end}`}</div>
                             <div className="class__name">{classData.name}</div>
+                            <div className="class__room">{classData.room}</div>
                         </div>
                         <div className="class__row">
-                            <div className="class__room">{classData.room}</div>
+                            <div className="class__time">{`${classData.begin}-${classData.end}`}</div>
                             <div className="class__type">{classData.type}</div>
                             <div className="class__teacher">{classData.teacher}</div>
                         </div>
