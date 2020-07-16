@@ -4,6 +4,7 @@ const gOAuth = require('./JS/gOAuth');
 const exporter = require('./JS/exporter');
 const bodyParser = require('body-parser');
 const {google} = require('googleapis');
+const path = require('path');
 
 const {creds, token, SPREADSHEET_ID} = utils.getEnvironment(process.env);
 
@@ -11,7 +12,7 @@ const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.clien
 oAuth2Client.setCredentials(token);
 const idle = Boolean(process.argv[2]);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 let schedules = {};
 let yearString = utils.createYearString();
 
@@ -40,23 +41,11 @@ app.use('/JS', express.static('JS'));
 app.use('/pics', express.static('pics'));
 app.use('/feedback', express.static('feedback'));
 app.use(bodyParser.urlencoded({extended: false}));
+app.use('/', express.static(path.join(__dirname, 'dist', 'index')));
 
-app.get('/', (req, res) => {
-    res.render("login.ejs");
-});
-
-app.get('/schedule', (req, res) => {
-    const groupName = req.query.group.toUpperCase();
-    const current = req.query.current;
-    if (schedules.pairs.hasOwnProperty(groupName)) {
-        const {currStudyWeekNum} = utils.getDateParams();
-        const filteredSchedule = utils.filterPairsByWeek(schedules.pairs[groupName], currStudyWeekNum);
-        if (current) {
-            const currSchedule = utils.getCurrentSchedule(filteredSchedule);
-            res.render('index.ejs', {schedule: currSchedule, groupName});
-        } else res.render('index.ejs', {schedule: filteredSchedule, groupName});
-    } else res.send(`Расписание группы ${groupName} не найдено!`);
-});
+app.get(['/', '/schedule', '/schedule/:group'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index', 'index.html'));
+})
 
 app.get('/exams', (req, res) => {
     const groupName = req.query.group.toUpperCase();

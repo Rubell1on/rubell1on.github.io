@@ -5,13 +5,29 @@
         "body-parser": "^1.18.3",
         "cheerio": "^1.0.0-rc.2",
         "ejs": "^2.6.1",
-        "express": "^4.16.4",
+        "express": "^4.17.1",
         "googleapis": "^27.0.0",
         "node-xlsx": "^0.14.1",
-        "request": "^2.88.0"
+        "react-router-dom": "^5.2.0",
+        "request": "^2.88.0",
+        "webpack": "^4.43.0"
     },
     "engines": {},
     "scripts": {
-        "start": "node server.js"
+        "start": "node server.js",
+        "babel-compile": "npx babel public/JSX --out-dir public/JS",
+        "watch": "webpack --mode development --watch"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.9.6",
+        "@babel/preset-react": "^7.9.4",
+        "babel-loader": "^8.1.0",
+        "css-loader": "^3.6.0",
+        "file-loader": "^6.0.0",
+        "html-webpack-plugin": "^4.3.0",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "style-loader": "^1.2.1",
+        "webpack-cli": "^3.3.12"
     }
 }
