@@ -16,6 +16,9 @@
 }
 
 .schedule__label {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
     margin-bottom: 10px;
 }
 
@@ -32,7 +35,8 @@
 }
 
 .day__name {
-
+    padding-left: 7px;
+    margin-bottom: 5px;
 }
 
 .day__classes > div {
@@ -43,14 +47,28 @@
     margin-bottom: 0px;
 }
 
-
 .class {
     border-radius: 5px;
     padding: 7px;
-    background: #6577e2;
     color: white;
     cursor: pointer;
     transition: background 200ms ease;
+}
+
+.class_style_even {
+    background: #6577e2;
+}
+
+.class_style_even:hover {
+    background: #7787e4
+}
+
+.class_style_odd {
+    background: #ee8d0f;
+}
+
+.class_style_odd:hover {
+    background: #FFA734;
 }
 
 .class > div {
@@ -61,11 +79,25 @@
     margin-bottom: 0px;
 }
 
-.class:hover {
-    background: #7787e4
-}
-
 .class__row {
     display: flex;
     justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+    .schedule > div {
+        margin-right: 0px;
+    }
+
+    .schedule {
+        padding: 10px;
+    }
+
+    .schedule_odd {
+        flex-direction: column-reverse;
+    }
+    
+    .schedule_even {
+        flex-direction: column-reverse;
+    }
 }

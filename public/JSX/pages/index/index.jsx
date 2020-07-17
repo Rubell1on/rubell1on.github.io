@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {buildQuery} from '../../../../JS/react/utils.js';
 
@@ -6,6 +6,11 @@ import './index.css';
 
 export default function Index() {
     const [groupName, setGroupName] = useState("");
+
+    useEffect(() => {
+        const group = localStorage.getItem('group');
+        if (group) location.href = `/schedule/${group}`;
+    }, [])
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -15,6 +20,7 @@ export default function Index() {
         if (res.ok) {
             const data = await res.json();
             if (data && data.groupName) {
+                localStorage.setItem('group', data.groupName);
                 location.href=`/schedule/${data.groupName}`;
             }
         }

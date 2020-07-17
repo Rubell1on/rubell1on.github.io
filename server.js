@@ -18,7 +18,7 @@ let yearString = utils.createYearString();
 
 app = express();
 
-app.listen(PORT, () => {
+app.listen(PORT, '192.168.1.133', () => {
     console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
     if (!idle) {
         console.log("Произвожу парсинг расписаний");

@@ -19,7 +19,7 @@ function getCurrStudyWeek() {
     const halfYear = getHalfYear();
     let subtrahend;
     if (halfYear === 'spring') {
-        subtrahend = 6;
+        subtrahend = 5;
     } else if (halfYear === 'autumn') {
         subtrahend = 33;
     }
