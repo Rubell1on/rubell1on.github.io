@@ -83,11 +83,16 @@
 
 .menu__link {
     color: white;
-    background: #8597FD;
+    background: #7787e4;
     border-radius: 5px;
     padding: 0 7px;
     line-height: 35px;
     font-size: 16px;
     min-width: 150px;
     text-decoration: none;
+    transition: background 200ms ease;
+}
+
+.menu__link_selected {
+    background: #8597FD
 }

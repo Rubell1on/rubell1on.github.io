@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Link, useRouteMatch, useHistory, useLocation} from 'react-router-dom';
+import {NavLink, useRouteMatch, useHistory, useLocation} from 'react-router-dom';
 
 import Week from '../../../../../JS/react/week.js';
 import { buildQuery } from '../../../../../JS/react/utils.js';
@@ -29,6 +29,10 @@ export default function Header() {
         setMenu(isMenuOpened ? false : true);
     }
 
+    function handleActive(match, location) {
+        return location.search ? true : false;
+    }
+
     return (
         <>
             {isMenuOpened 
@@ -37,8 +41,16 @@ export default function Header() {
                     <div className="menu">
                         <div className="menu__header">Меню</div>
                         <div className="menu__link-list">
-                            <Link className="menu__link" to={{pathname: `/schedule/${match.params.group}`, search: `?${buildQuery({current: true})}`}}>Текущее</Link>
-                            <Link className="menu__link" to={`/schedule/${match.params.group}`}>Полное</Link>
+                            <NavLink className="menu__link" 
+                                activeClassName="menu__link_selected" 
+                                isActive={(match, location) => location.search} 
+                                to={{pathname: `/schedule/${match.params.group}`, search: `?${buildQuery({current: true})}`}}
+                            >Текущее</NavLink>
+                            <NavLink className="menu__link" 
+                                activeClassName="menu__link_selected" 
+                                isActive={(match, location) => !location.search}
+                                to={`/schedule/${match.params.group}`}
+                            >Полное</NavLink>
                         </div>
                     </div>
                 </div>
