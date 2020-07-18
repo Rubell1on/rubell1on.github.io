@@ -67,6 +67,7 @@ app.get('/api/schedule', (req, res) => {
                 if (query.hasOwnProperty('current')) {
                     currSchedule = utils.getCurrentSchedule(groupSched);
                     res.json({schedule: currSchedule, groupName});
+                    return;
                 }
                 res.json({schedule: groupSched, groupName});
                 

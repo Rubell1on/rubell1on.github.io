@@ -326,9 +326,9 @@ module.exports = {
         const halfYear = this.getHalfYear();
         let subtrahend;
         if (halfYear === 'spring') {
-            subtrahend = 6;
+            subtrahend = 5;
         } else if (halfYear === 'autumn') {
-            subtrahend = 34;
+            subtrahend = 33;
         }
 
         return this.getCurrWeek() - subtrahend;
@@ -390,14 +390,14 @@ module.exports = {
         }, {});
     },
     getCurrentSchedule: function(groupSched){
-        const {currWeek, currentDay} = this.getDateParams();
+        const {currStudyWeekNum, currentDay} = this.getDateParams();
         // console.log(groupSched[currWeek]);
         // console.log(groupSched[currWeek][currentDay]);
         // console.log(Object.keys(groupSched[currWeek][currentDay]));
-        if (groupSched[currWeek] && groupSched[currWeek][currentDay]) {
+        if (groupSched[currStudyWeekNum] && groupSched[currStudyWeekNum][currentDay]) {
             const currSchedule = {};
-            currSchedule[currWeek] = {};
-            currSchedule[currWeek][currentDay] = groupSched[currWeek][currentDay];
+            currSchedule[currStudyWeekNum] = {};
+            currSchedule[currStudyWeekNum][currentDay] = groupSched[currStudyWeekNum][currentDay];
             return currSchedule;
         } else {
             return undefined;

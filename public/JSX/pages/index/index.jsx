@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {buildQuery} from '../../../../JS/react/utils.js';
 
 import './index.css';
 
 export default function Index() {
+    const history = useHistory();
     const [groupName, setGroupName] = useState("");
 
     useEffect(() => {
         const group = localStorage.getItem('group');
-        if (group) location.href = `/schedule/${group}`;
+        if (group) history.push(`/schedule/${group}`);
     }, [])
 
     async function handleSubmit(e) {
@@ -21,7 +23,7 @@ export default function Index() {
             const data = await res.json();
             if (data && data.groupName) {
                 localStorage.setItem('group', data.groupName);
-                location.href=`/schedule/${data.groupName}`;
+                history.push(`/schedule/${data.groupName}`);
             }
         }
     }

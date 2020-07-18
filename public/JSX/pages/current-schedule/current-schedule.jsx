@@ -1,16 +1,21 @@
 import React, {useEffect, useState} from 'react';
+import {useRouteMatch, useParams} from 'react-router-dom';
+
+import ClassBlock from '../../components/class-block/class-block.jsx';
 
 import {buildQuery} from '../../../../JS/react/utils.js';
 import Week from '../../../../JS/react/week.js';
-import './full-schedule.css';
 
-export default function FullSchedule(props) {
+// import './full-schedule.css';
+
+export default function CurrentSchedule(props) {
     const [data, setData] = useState([]);
+    const match = useRouteMatch('/:type/:group');
 
     useEffect(() => {
         setTitle();
         (async () => {
-            const query = buildQuery({group: props.match.params.group});
+            const query = buildQuery({group: match.params.group});
             const res = await fetch(`/api/schedule?${query}`)
                 .catch(e => console.error(e));
             
@@ -24,7 +29,7 @@ export default function FullSchedule(props) {
     }, []);
 
     function setTitle() {
-        const params = props.match.params;
+        const params = match.params;
         document.title = params && params.group ? `${params.group} - Расписание` : 'Расписание';
     }
 
@@ -34,18 +39,17 @@ export default function FullSchedule(props) {
             const sortedData = sortWeek(weekData);
             const days = sortedData.map((day, i) => {   
                 const classes = Object.entries(day.dayData).map(([classId, classData]) => {
-                    return <div className={`class class_style_${weekNum == 1 ? "even" : "odd"}`} key={classId}>
-                        <div className="class__row">
-                            <div className="class__id">{classId}</div>
-                            <div className="class__name">{classData.name}</div>
-                            <div className="class__room">{classData.room}</div>
-                        </div>
-                        <div className="class__row">
-                            <div className="class__time">{`${classData.begin}-${classData.end}`}</div>
-                            <div className="class__type">{classData.type}</div>
-                            <div className="class__teacher">{classData.teacher}</div>
-                        </div>
-                    </div> 
+                    return <ClassBlock 
+                                key={classId}
+                                id={classId} 
+                                name={classData.name} 
+                                room={classData.room}
+                                classBegin={classData.begin} 
+                                classEnd={classData.end} 
+                                type={classData.type}
+                                teacherName={classData.teacher}
+                                weekParity={weekNum}
+                            />
                 });
 
                 return classes.length 

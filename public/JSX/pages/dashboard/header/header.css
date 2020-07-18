@@ -1,15 +1,15 @@
 .header {
-    height: 40px;
+    height: 45px;
     width: 100%;
     background: #6577e2;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    padding: 0 7px;
 }
 
 .header__controls {
     display: flex;
-    padding: 0 5px 0 5px;
 }
 
 .header__controls > * {
@@ -21,15 +21,17 @@
 }
 
 .header__element {
-    margin-top: 5px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
     height: 30px;
     border-radius: 5px;
     background: #7787e4;
-    padding: 0 5px 0 5px;
+    padding: 0px 7px;
     line-height: 30px;
     color: white;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 16px;
     transition: background 200ms ease;
     text-align: center;
 }
@@ -41,4 +43,51 @@
 .donation__icon {
     padding: 4px 0 4px 0;
     height: 100%;
+}
+
+.menu__background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #807f7f52;
+    left: 0;
+    top: 45px;
+}
+
+.menu {
+    position: fixed;
+    top: 40px;
+    padding: 7px;
+    background: #6577e2;
+}
+
+.menu__header {
+    color: white;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.menu__link-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu__link-list > a {
+    margin-bottom: 5px;
+}
+
+.menu__link-list > a:last-child {
+    margin-bottom: 0px;
+}
+
+.menu__link {
+    color: white;
+    background: #8597FD;
+    border-radius: 5px;
+    padding: 0 7px;
+    line-height: 35px;
+    font-size: 16px;
+    min-width: 150px;
+    text-decoration: none;
 }

@@ -47,43 +47,6 @@
     margin-bottom: 0px;
 }
 
-.class {
-    border-radius: 5px;
-    padding: 7px;
-    color: white;
-    cursor: pointer;
-    transition: background 200ms ease;
-}
-
-.class_style_even {
-    background: #6577e2;
-}
-
-.class_style_even:hover {
-    background: #7787e4
-}
-
-.class_style_odd {
-    background: #ee8d0f;
-}
-
-.class_style_odd:hover {
-    background: #FFA734;
-}
-
-.class > div {
-    margin-bottom: 5px;
-}
-
-.class > div:last-child {
-    margin-bottom: 0px;
-}
-
-.class__row {
-    display: flex;
-    justify-content: space-between;
-}
-
 @media (max-width: 768px) {
     .schedule > div {
         margin-right: 0px;

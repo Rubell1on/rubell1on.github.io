@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
 import Index from '../index/index.jsx';
 import Dashboard from '../dashboard/dashboard.jsx';
+import NotFound from '../not-found/not-found.jsx';
 
 import './style.css';
 
@@ -13,6 +14,7 @@ function App() {
             <Switch>
                 <Route exact path="/" component={Index}/>
                 <Route path="/schedule" component={Dashboard}/>
+                <Route path="/404" component={NotFound} />
             </Switch>
         </BrowserRouter>
     )

@@ -1,8 +1,26 @@
 function buildQuery(obj) {
     return Object.entries(obj).map(([key, value]) => {
         const val = Array.isArray(value) || typeof value === 'object' ? JSON.stringify(value) : value;
-        return `${key}=${val}`;
-    }).join('&');
+        return val ? `${key}=${val}` : null;
+    }).filter(e => e).join('&');
+}
+
+function parseQuery(query) {
+    if (typeof query === 'string' && query) {
+        const temp = query[0] === '?' ? query.slice(1) : query;
+
+        return temp.split('&').reduce((acc, curr) => {
+            const [key, value] = curr.split('=');
+            if (key && value) {
+                acc[key] = value;
+                return acc;
+            } else {
+                throw new ReferenceError();
+            }
+        }, {});
+    } else {
+        throw new TypeError();
+    }
 }
 
 function getCurrWeek() {
@@ -33,4 +51,4 @@ function getHalfYear() {
     return springMonth.includes(month) ? 'spring': 'autumn'; 
 }
 
-export {buildQuery, getCurrWeek, getHalfYear, getCurrStudyWeek};
+export {buildQuery, getCurrWeek, getHalfYear, getCurrStudyWeek, parseQuery};
