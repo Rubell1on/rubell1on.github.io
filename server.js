@@ -12,13 +12,13 @@ const oAuth2Client = new google.auth.OAuth2(creds.web.client_id, creds.web.clien
 oAuth2Client.setCredentials(token);
 const idle = Boolean(process.argv[2]);
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 let schedules = {};
 let yearString = utils.createYearString();
 
 app = express();
 
-app.listen(PORT, '192.168.1.133', () => {
+app.listen(PORT, () => {
     console.log(`Сервер запущен и ожидает запросы по ${PORT}`);
     if (!idle) {
         console.log("Произвожу парсинг расписаний");
