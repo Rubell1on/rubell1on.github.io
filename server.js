@@ -43,15 +43,9 @@ app.use('/feedback', express.static('feedback'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/', express.static(path.join(__dirname, 'dist', 'index')));
 
-app.get(['/', '/schedule', '/schedule/:group'], (req, res) => {
+app.get(['/', '/schedule', '/schedule/:group', '/exams/:group', '/404'], (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index', 'index.html'));
 })
-
-app.get('/exams', (req, res) => {
-    const groupName = req.query.group.toUpperCase();
-    if (schedules.exams.hasOwnProperty(groupName)) res.render('exams.ejs', {exams: schedules.exams[groupName], groupName});
-    else res.send(`Расписание экзаменов по группе ${groupName} не найдено!`);
-});
 
 app.get('/api/schedule', (req, res) => {
     const query = req.query;

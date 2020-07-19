@@ -15,7 +15,7 @@ export default function Schedule(props) {
     const params = useParams();
 
     useEffect(() => {
-        setTitle();
+        setTitle('Расписание');
         (async () => {
             const query = buildQuery({group: params.group, current});
             const res = await fetch(`/api/schedule?${query}`)
@@ -29,8 +29,8 @@ export default function Schedule(props) {
         })();
     }, [location]);
 
-    function setTitle() {
-        document.title = params && params.group ? `${params.group} - Расписание` : 'Расписание';
+    function setTitle(title) {
+        document.title = params && params.group ? `${params.group} - ${title}` : title;
     }
 
     function processSchedule(data) {

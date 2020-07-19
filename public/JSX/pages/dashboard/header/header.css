@@ -8,6 +8,14 @@
     padding: 0 7px;
 }
 
+.header > div {
+    margin-right: 5px;
+}
+
+.header > div:last-child {
+    margin-right: 0px;
+}
+
 .header__controls {
     display: flex;
 }

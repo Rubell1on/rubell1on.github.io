@@ -14,6 +14,7 @@ function App() {
             <Switch>
                 <Route exact path="/" component={Index}/>
                 <Route path="/schedule" component={Dashboard}/>
+                <Route path="/exams" component={Dashboard}/>
                 <Route path="/404" component={NotFound} />
             </Switch>
         </BrowserRouter>
