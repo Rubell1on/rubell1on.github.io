@@ -51,7 +51,7 @@ export default function Header() {
                 ? <div className="menu__wrapper">
                     <div className="menu__background" onClick={e => setMenu(false)}></div>
                     <div className="menu">
-                    <div className="menu__header">{match.params.group}</div>
+                        <div className="menu__header">{match.params.group}</div>
                         <div className="menu__link-list">{menuButtons}</div>
                     </div>
                 </div>
@@ -63,10 +63,10 @@ export default function Header() {
                     <div className="header__element header__week">#{week}</div>
                 </div>
                 <div className="header__controls">
-                    <div className="header__element header__donation donation">
+                    {/* <div className="header__element header__donation donation">
                         <img className="donation__icon" src={coinGif} />
                     </div>
-                    <div className="header__element header__feebback">Обратная связь</div>
+                    <div className="header__element header__feebback">Обратная связь</div> */}
                     <div className="header__element header__quit" onClick={e => handleQuit()}>Выход</div>
                 </div>
             </div>
