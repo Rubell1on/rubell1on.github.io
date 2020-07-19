@@ -10,6 +10,7 @@ export default function Index() {
     const [groupName, setGroupName] = useState("");
 
     useEffect(() => {
+        document.title = "Расписание - Главная";
         const group = localStorage.getItem('group');
         if (group) history.push(`/schedule/${group}`);
     }, [])
